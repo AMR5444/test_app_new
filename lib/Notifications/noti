@@ -1,0 +1,94 @@
+ static Future<void> scheduleDailyAzkar() async {
+    print('🔔 بدء جدولة إشعارات الأذكار اليومية...');
+
+    await NotificationsService.init();
+    print('✅ تم تهيئة نظام الإشعارات');
+
+    // الحصول على التوقيت المحلي للجهاز
+    final tz.Location local = tz.local;
+    final now = tz.TZDateTime.now(local);
+    print('⏰ التوقيت المحلي الحالي: $now');
+    print('🌍 المنطقة الزمنية: ${local.name}');
+
+    var morningTime = tz.TZDateTime(
+      local,
+      now.year,
+      now.month,
+      now.day,
+      7, // الساعة 7 صباحاً
+      0, // 0 دقيقة
+      0, // 0 ثانية
+    );
+
+    // لو الوقت فات النهارده، اجدوله لبكرة
+    if (morningTime.isBefore(now)) {
+      morningTime = morningTime.add(const Duration(days: 1));
+      print('⏭️ وقت الصباح فات، هيتم الجدولة لبكرة');
+    }
+
+    print('🌅 موعد إشعار أذكار الصباح: $morningTime');
+
+    await NotificationsService.scheduleNotification(
+      id: 1, // ID ثابت لأذكار الصباح
+      title: '🌅 أذكار الصباح',
+      body: 'حان وقت أذكار الصباح، لا تنسى قراءتها',
+      scheduledDate: morningTime,
+      payload: 'أذكار الصباح', // ده اللي هيستخدمه عند الضغط على الإشعار
+    );
+    print('✅ تم جدولة إشعار أذكار الصباح بنجاح');
+
+    var eveningTime = tz.TZDateTime(
+      local,
+      now.year,
+      now.month,
+      now.day,
+      19, // الساعة 7 مساءً (19:00)
+      0,
+      0,
+    );
+
+    // لو الوقت فات النهارده، اجدوله لبكرة
+    if (eveningTime.isBefore(now)) {
+      eveningTime = eveningTime.add(const Duration(days: 1));
+      print(' وقت المساء فات، هيتم الجدولة لبكرة');
+    }
+
+    print('🌙 موعد إشعار أذكار المساء: $eveningTime');
+
+    await NotificationsService.scheduleNotification(
+      id: 2, // ID ثابت لأذكار المساء
+      title: '🌙 أذكار المساء',
+      body: 'حان وقت أذكار المساء، لا تنسى قراءتها',
+      scheduledDate: eveningTime,
+      payload: 'أذكار المساء', // ده اللي هيستخدمه عند الضغط على الإشعار
+    );
+    print('✅ تم جدولة إشعار أذكار المساء بنجاح');
+    var azkarElnomTime = tz.TZDateTime(
+      local,
+      now.year,
+      now.month,
+      now.day,
+      23, // الساعة 11 مساءً
+      0,
+      0,
+    );
+
+    if (azkarElnomTime.isBefore(now)) {
+      azkarElnomTime = azkarElnomTime.add(const Duration(days: 1));
+    }
+    await NotificationsService.scheduleNotification(
+      id: 3,
+      title: '😴 أذكار النوم',
+      body: 'حان وقت أذكار النوم، لا تنسى قراءتها',
+      scheduledDate: azkarElnomTime,
+      payload: 'أذكار النوم', // ده اللي هيستخدمه عند الضغط على الإشعار
+    );
+
+    print('✅ تم جدولة إشعار أذكار النوم بنجاح');
+
+    print('════════════════════════════════════════════════════');
+    print('✅ تم جدولة جميع الإشعارات اليومية بنجاح!');
+    print('📱 الإشعارات هتشتغل يومياً في نفس المواعيد');
+    print('🌍 حسب التوقيت المحلي: ${local.name}');
+    print('════════════════════════════════════════════════════');
+  }
