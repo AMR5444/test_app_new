@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:test_app_new/Api/Azkar_API.dart';
-import 'package:test_app_new/Notifications/NotificationsService.dart';
-import 'package:test_app_new/cubit/azkar_cubit.dart';
-import 'package:test_app_new/widgets/Azkar_ListView.dart';
-import 'package:test_app_new/widgets/azkarCategori_Screen.dart';
-import 'Notifications/azkar_scheduler.dart';
+import 'package:hive_flutter/adapters.dart';
+import 'package:test_app_new/views/main_navigation_screen.dart';
+import 'package:test_app_new/azkr_section/logic/azkar_cubit.dart';
+import 'package:test_app_new/azkr_section/views/azkarCategori_Screen.dart';
+import 'package:test_app_new/core/Notifications/NotificationsService.dart';
+import 'azkr_section/data/Azkar_API.dart';
+import 'core/Notifications/azkar_scheduler.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 Future<void> requestNotificationPermission() async {
@@ -17,6 +18,14 @@ Future<void> requestNotificationPermission() async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Hive.initFlutter();
+
+  await Hive.openBox('favoritesBox');
+  await Hive.openBox('tafsirBox');
+  await Hive.openBox('lastPositionBox');
+  await Hive.openBox('bookmarksBox');
+  await Hive.openBox('notesBox');
 
   await requestNotificationPermission();
   await scheduleDailyAzkar();
@@ -35,8 +44,9 @@ class MyApp extends StatelessWidget {
         navigatorKey: NotificationsService.navigatorKey,
         debugShowCheckedModeBanner: false,
 
+        home: const MainNavigationScreen(),
+
         routes: {
-          '/': (context) => AzkarCategoriesScreen(),
           '/azkar': (context) {
             final category =
                 ModalRoute.of(context)?.settings.arguments as String? ??
@@ -44,12 +54,10 @@ class MyApp extends StatelessWidget {
 
             return Scaffold(
               appBar: AppBar(title: Text(category), centerTitle: true),
-              body: const AzkarListView(),
+              body: AzkarCategoriesScreen(), //
             );
           },
         },
-
-        initialRoute: '/',
       ),
     );
   }

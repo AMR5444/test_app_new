@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:test_app_new/models/azkar_model.dart';
+import 'package:test_app_new/azkr_section/models/azkar_model.dart';
 
 class AzkarApi {
   static const String url =

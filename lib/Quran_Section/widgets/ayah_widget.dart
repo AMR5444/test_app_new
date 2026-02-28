@@ -1,0 +1,381 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:hive_flutter/adapters.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:test_app_new/Quran_Section/data/Tafsir_api_Service.dart';
+import 'package:test_app_new/Quran_Section/data/audio_service.dart';
+import 'package:test_app_new/Quran_Section/data/bookmark_service.dart';
+import 'package:test_app_new/Quran_Section/data/note_service.dart';
+import 'package:test_app_new/Quran_Section/models/ayah_model.dart';
+import 'package:test_app_new/Quran_Section/models/bookmark_model.dart';
+import 'package:test_app_new/Quran_Section/models/note_model.dart';
+
+class AyahWidget extends StatefulWidget {
+  final AyahModel ayah;
+  final int surahNumber; // ✅ إضافة رقم السورة
+
+  const AyahWidget({super.key, required this.ayah, required this.surahNumber});
+
+  @override
+  State<AyahWidget> createState() => _AyahWidgetState();
+}
+
+class _AyahWidgetState extends State<AyahWidget> {
+  bool _isHighlighted = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        setState(() {
+          _isHighlighted = !_isHighlighted;
+        });
+      },
+      onLongPress: () => _showOptions(context),
+      splashColor: Colors.brown.withOpacity(0.2),
+      highlightColor: Colors.brown.withOpacity(0.1),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        color: _isHighlighted
+            ? Colors.brown.withOpacity(0.08)
+            : Colors.transparent,
+        child: Text(
+          "${widget.ayah.text} ﴿${widget.ayah.numberInSurah}﴾ ",
+          textAlign: TextAlign.right,
+          textDirection: TextDirection.rtl,
+          style: const TextStyle(fontSize: 24, height: 2.2),
+        ),
+      ),
+    );
+  }
+
+  void _showOptions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xfff5f0e1),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(20),
+          child: Wrap(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.copy),
+                title: const Text("نسخ الآية"),
+                onTap: () {
+                  Clipboard.setData(ClipboardData(text: widget.ayah.text));
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(const SnackBar(content: Text("تم نسخ الآية")));
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.share),
+                title: const Text("مشاركة"),
+                onTap: () async {
+                  await SharePlus.instance.share(
+                    ShareParams(
+                      text:
+                          "${widget.ayah.text}\n - آية ${widget.ayah.numberInSurah}",
+                    ),
+                  );
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.bookmark),
+                title: const Text("إضافة للمفضلة"),
+                onTap: () async {
+                  final box = Hive.box('favoritesBox');
+                  final String uniqueKey =
+                      "${widget.surahNumber}_${widget.ayah.numberInSurah}"; // ✅ مفتاح فريد
+
+                  // ✅ التحقق من وجود الآية
+                  if (box.containsKey(uniqueKey)) {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("الآية موجودة بالفعل في المفضلة"),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                    return;
+                  }
+
+                  // ✅ حفظ الآية مع رقم السورة
+                  await box.put(uniqueKey, {
+                    "text": widget.ayah.text,
+                    "ayahNumber": widget.ayah.numberInSurah,
+                    "surahNumber": widget.surahNumber,
+                    "page": widget.ayah.page,
+                  });
+
+                  Navigator.pop(context);
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("تمت الإضافة للمفضلة")),
+                  );
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.menu_book),
+                title: const Text("التفسير"),
+                onTap: () async {
+                  final navigator = Navigator.of(context);
+                  final scaffoldMessenger = ScaffoldMessenger.of(context);
+
+                  navigator.pop();
+
+                  if (!mounted) return;
+
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (_) =>
+                        const Center(child: CircularProgressIndicator()),
+                  );
+
+                  try {
+                    final tafsir = await TafsirService().getTafsir(
+                      widget.ayah.number,
+                    );
+
+                    if (!mounted) return;
+
+                    Navigator.of(context).pop();
+
+                    if (!mounted) return;
+
+                    showModalBottomSheet(
+                      context: context,
+                      backgroundColor: const Color(0xfff5f0e1),
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(20),
+                        ),
+                      ),
+                      isScrollControlled: true,
+                      builder: (_) {
+                        return Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: SingleChildScrollView(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  widget.ayah.text,
+                                  textAlign: TextAlign.right,
+                                  textDirection: TextDirection.rtl,
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    height: 2,
+                                  ),
+                                ),
+                                const SizedBox(height: 20),
+                                const Text(
+                                  "التفسير الميسر",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.right,
+                                ),
+                                const SizedBox(height: 10),
+                                Text(
+                                  tafsir,
+                                  textAlign: TextAlign.right,
+                                  textDirection: TextDirection.rtl,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    height: 1.8,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  } catch (e) {
+                    if (!mounted) return;
+
+                    Navigator.of(context).pop();
+
+                    if (!mounted) return;
+
+                    scaffoldMessenger.showSnackBar(
+                      SnackBar(content: Text("حدث خطأ في تحميل التفسير")),
+                    );
+                  }
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.volume_up),
+                title: const Text("تشغيل الصوت"),
+                onTap: () async {
+                  await AudioService.playAyah(widget.ayah.number);
+                },
+              ),
+              // في نهاية قائمة الـ options في _showOptions
+              ListTile(
+                leading: const Icon(Icons.bookmark_border),
+                title: const Text("إضافة إشارة مرجعية"),
+                onTap: () async {
+                  final id =
+                      '${widget.surahNumber}_${widget.ayah.numberInSurah}';
+
+                  // التحقق من وجود bookmark
+                  final hasBookmark = await BookmarkService.hasBookmark(
+                    widget.surahNumber,
+                    widget.ayah.numberInSurah,
+                  );
+
+                  if (hasBookmark) {
+                    // حذف الـ bookmark
+                    await BookmarkService.deleteBookmark(id);
+
+                    if (!mounted) return;
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("تم إزالة الإشارة المرجعية"),
+                      ),
+                    );
+                  } else {
+                    // إضافة bookmark جديد
+                    final bookmark = BookmarkModel(
+                      id: id,
+                      surahNumber: widget.surahNumber,
+                      ayahNumber: widget.ayah.numberInSurah,
+                      ayahText: widget.ayah.text,
+                      createdAt: DateTime.now(),
+                    );
+
+                    await BookmarkService.addBookmark(bookmark);
+
+                    if (!mounted) return;
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("تمت إضافة الإشارة المرجعية"),
+                      ),
+                    );
+                  }
+                },
+              ),
+
+              ListTile(
+                leading: const Icon(Icons.note_add),
+                title: const Text("إضافة ملاحظة"),
+                onTap: () async {
+                  Navigator.pop(context); // إغلاق القائمة الحالية
+
+                  // التحقق من وجود ملاحظة سابقة
+                  final existingNote = await NoteService.getNote(
+                    widget.surahNumber,
+                    widget.ayah.numberInSurah,
+                  );
+
+                  if (!mounted) return;
+
+                  final controller = TextEditingController(
+                    text: existingNote?.noteText ?? '',
+                  );
+
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text(
+                        "إضافة ملاحظة",
+                        textAlign: TextAlign.right,
+                      ),
+                      content: TextField(
+                        controller: controller,
+                        maxLines: 5,
+                        textDirection: TextDirection.rtl,
+                        decoration: const InputDecoration(
+                          hintText: "اكتب ملاحظتك هنا...",
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text("إلغاء"),
+                        ),
+                        if (existingNote != null)
+                          TextButton(
+                            onPressed: () async {
+                              await NoteService.deleteNote(existingNote.id);
+                              if (!mounted) return;
+                              Navigator.pop(context);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("تم حذف الملاحظة"),
+                                ),
+                              );
+                            },
+                            child: const Text(
+                              "حذف",
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          ),
+                        TextButton(
+                          onPressed: () async {
+                            final noteText = controller.text.trim();
+
+                            if (noteText.isEmpty) {
+                              Navigator.pop(context);
+                              return;
+                            }
+
+                            final id =
+                                '${widget.surahNumber}_${widget.ayah.numberInSurah}';
+                            final note = NoteModel(
+                              id: id,
+                              surahNumber: widget.surahNumber,
+                              ayahNumber: widget.ayah.numberInSurah,
+                              ayahText: widget.ayah.text,
+                              noteText: noteText,
+                              createdAt:
+                                  existingNote?.createdAt ?? DateTime.now(),
+                              updatedAt: existingNote != null
+                                  ? DateTime.now()
+                                  : null,
+                            );
+
+                            if (existingNote != null) {
+                              await NoteService.updateNote(note);
+                            } else {
+                              await NoteService.addNote(note);
+                            }
+
+                            if (!mounted) return;
+                            Navigator.pop(context);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  existingNote != null
+                                      ? "تم تحديث الملاحظة"
+                                      : "تمت إضافة الملاحظة",
+                                ),
+                              ),
+                            );
+                          },
+                          child: const Text("حفظ"),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}

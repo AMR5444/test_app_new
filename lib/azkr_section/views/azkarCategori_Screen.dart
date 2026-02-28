@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:test_app_new/widgets/Generic%20Azkar%20Screen.dart';
+import 'package:test_app_new/azkr_section/views/Generic%20Azkar%20Screen.dart';
 
 class AzkarCategoriesScreen extends StatelessWidget {
   const AzkarCategoriesScreen({super.key});

@@ -1,6 +1,6 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:test_app_new/Api/Azkar_API.dart';
-import 'package:test_app_new/models/azkar_model.dart';
+import 'package:test_app_new/azkr_section/data/Azkar_API.dart';
+import 'package:test_app_new/azkr_section/models/azkar_model.dart';
 import 'package:flutter/material.dart';
 import 'package:timezone/timezone.dart';
 import 'package:timezone/data/latest.dart';

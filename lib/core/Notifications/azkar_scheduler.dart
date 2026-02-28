@@ -1,4 +1,4 @@
-import 'package:test_app_new/Notifications/NotificationsService.dart';
+import 'package:test_app_new/core/Notifications/NotificationsService.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
