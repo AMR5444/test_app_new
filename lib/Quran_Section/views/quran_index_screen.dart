@@ -24,8 +24,20 @@ class _QuranIndexScreenState extends State<QuranIndexScreen> {
   @override
   void initState() {
     super.initState();
-    surahsFuture = QuranApiService().fetchSurahs();
+    _checkConnectionAndFetch();
     _loadLastPosition();
+  }
+
+  Future<void> _checkConnectionAndFetch() async {
+    try {
+      setState(() {
+        surahsFuture = QuranApiService().fetchSurahs();
+      });
+    } catch (e) {
+      setState(() {
+        surahsFuture = Future.error('حدث خطأ في الاتصال');
+      });
+    }
   }
 
   Future<void> _loadLastPosition() async {
@@ -77,9 +89,35 @@ class _QuranIndexScreenState extends State<QuranIndexScreen> {
 
         if (snapshot.hasError) {
           return Center(
-            child: Text(
-              "حدث خطأ أثناء تحميل السور:\n${snapshot.error}",
-              textAlign: TextAlign.center,
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, size: 80, color: Colors.red),
+                  const SizedBox(height: 20),
+                  const Text(
+                    "حدث خطأ",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    "تأكد من اتصالك بالإنترنت",
+                    style: TextStyle(color: Colors.grey),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      setState(() {
+                        surahsFuture = QuranApiService().fetchSurahs();
+                      });
+                    },
+                    icon: const Icon(Icons.refresh),
+                    label: const Text("إعادة المحاولة"),
+                  ),
+                ],
+              ),
             ),
           );
         }

@@ -9,10 +9,11 @@ import 'package:test_app_new/Quran_Section/data/note_service.dart';
 import 'package:test_app_new/Quran_Section/models/ayah_model.dart';
 import 'package:test_app_new/Quran_Section/models/bookmark_model.dart';
 import 'package:test_app_new/Quran_Section/models/note_model.dart';
+import 'dart:ui';
 
 class AyahWidget extends StatefulWidget {
   final AyahModel ayah;
-  final int surahNumber; // ✅ إضافة رقم السورة
+  final int surahNumber; //  إضافة رقم السورة
 
   const AyahWidget({super.key, required this.ayah, required this.surahNumber});
 
@@ -22,6 +23,7 @@ class AyahWidget extends StatefulWidget {
 
 class _AyahWidgetState extends State<AyahWidget> {
   bool _isHighlighted = false;
+  bool _isLoadingTafsir = false;
 
   @override
   Widget build(BuildContext context) {
@@ -124,90 +126,179 @@ class _AyahWidgetState extends State<AyahWidget> {
                 leading: const Icon(Icons.menu_book),
                 title: const Text("التفسير"),
                 onTap: () async {
+                  // ✅ حفظ كل حاجة قبل أي await
                   final navigator = Navigator.of(context);
                   final scaffoldMessenger = ScaffoldMessenger.of(context);
 
+                  // إغلاق الـ bottom sheet
                   navigator.pop();
+
+                  // انتظار frame
+                  await Future.delayed(const Duration(milliseconds: 100));
 
                   if (!mounted) return;
 
-                  showDialog(
-                    context: context,
-                    barrierDismissible: false,
-                    builder: (_) =>
-                        const Center(child: CircularProgressIndicator()),
+                  // عرض loading
+                  navigator.push(
+                    PageRouteBuilder(
+                      opaque: false,
+                      barrierDismissible: false,
+                      pageBuilder: (c, _, __) =>
+                          const Center(child: CircularProgressIndicator()),
+                    ),
                   );
 
                   try {
-                    final tafsir = await TafsirService().getTafsir(
+                    final String tafsir = await TafsirService().getTafsir(
                       widget.ayah.number,
                     );
 
+                    if (!mounted) {
+                      navigator.pop();
+                      return;
+                    }
+
+                    // إغلاق loading
+                    navigator.pop();
+
                     if (!mounted) return;
 
-                    Navigator.of(context).pop();
+                    // التحقق من محتوى التفسير
+                    final isError =
+                        tafsir.contains('غير متوفر') ||
+                        tafsir.contains('خطأ') ||
+                        tafsir.contains('الاتصال');
 
-                    if (!mounted) return;
+                    if (isError) {
+                      scaffoldMessenger.showSnackBar(
+                        SnackBar(content: Text(tafsir)),
+                      );
+                      return;
+                    }
 
-                    showModalBottomSheet(
-                      context: context,
-                      backgroundColor: const Color(0xfff5f0e1),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(20),
-                        ),
-                      ),
-                      isScrollControlled: true,
-                      builder: (_) {
-                        return Padding(
-                          padding: const EdgeInsets.all(20),
-                          child: SingleChildScrollView(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text(
-                                  widget.ayah.text,
-                                  textAlign: TextAlign.right,
-                                  textDirection: TextDirection.rtl,
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                    height: 2,
+                    // ✅ عرض التفسير مع blur
+                    navigator.push(
+                      PageRouteBuilder(
+                        opaque: false, // ✅ مهم جداً للـ blur
+                        barrierColor: Colors.black.withOpacity(0.3), // ✅ جديد
+                        pageBuilder: (c, animation, secondaryAnimation) =>
+                            BackdropFilter(
+                              filter: ImageFilter.blur(
+                                sigmaX: 5,
+                                sigmaY: 5,
+                              ), // ✅ blur
+                              child: GestureDetector(
+                                onTap: () => Navigator.of(c).pop(),
+                                child: Scaffold(
+                                  backgroundColor: Colors.transparent,
+                                  body: Center(
+                                    child: Container(
+                                      margin: const EdgeInsets.all(20),
+                                      constraints: const BoxConstraints(
+                                        maxHeight: 600,
+                                      ),
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xfff5f0e1),
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(20),
+                                        ),
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius: const BorderRadius.all(
+                                          Radius.circular(20),
+                                        ),
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Container(
+                                              padding: const EdgeInsets.all(16),
+                                              decoration: BoxDecoration(
+                                                color: Colors.brown.shade100,
+                                              ),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  IconButton(
+                                                    icon: const Icon(
+                                                      Icons.close,
+                                                    ),
+                                                    onPressed: () =>
+                                                        Navigator.of(c).pop(),
+                                                  ),
+                                                  const Text(
+                                                    "التفسير الميسر",
+                                                    style: TextStyle(
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 48),
+                                                ],
+                                              ),
+                                            ),
+                                            Flexible(
+                                              child: SingleChildScrollView(
+                                                padding: const EdgeInsets.all(
+                                                  20,
+                                                ),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.end,
+                                                  children: [
+                                                    Text(
+                                                      widget.ayah.text,
+                                                      textAlign:
+                                                          TextAlign.right,
+                                                      textDirection:
+                                                          TextDirection.rtl,
+                                                      style: const TextStyle(
+                                                        fontSize: 20,
+                                                        height: 2,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    const Divider(height: 30),
+                                                    Text(
+                                                      tafsir,
+                                                      textAlign:
+                                                          TextAlign.right,
+                                                      textDirection:
+                                                          TextDirection.rtl,
+                                                      style: const TextStyle(
+                                                        fontSize: 16,
+                                                        height: 1.8,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
-                                const SizedBox(height: 20),
-                                const Text(
-                                  "التفسير الميسر",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  textAlign: TextAlign.right,
-                                ),
-                                const SizedBox(height: 10),
-                                Text(
-                                  tafsir,
-                                  textAlign: TextAlign.right,
-                                  textDirection: TextDirection.rtl,
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    height: 1.8,
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
-                          ),
-                        );
-                      },
+                      ),
                     );
                   } catch (e) {
-                    if (!mounted) return;
+                    if (!mounted) {
+                      navigator.pop();
+                      return;
+                    }
 
-                    Navigator.of(context).pop();
+                    navigator.pop();
 
                     if (!mounted) return;
 
                     scaffoldMessenger.showSnackBar(
-                      SnackBar(content: Text("حدث خطأ في تحميل التفسير")),
+                      const SnackBar(content: Text("حدث خطأ")),
                     );
                   }
                 },
