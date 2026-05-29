@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:test_app_new/Quran_Section/data/quran_api_service.dart';
 import 'package:test_app_new/Quran_Section/models/ayah_model.dart';
+import 'package:test_app_new/core/theme/app_theme.dart';
+import 'package:test_app_new/settings/app_settings_controller.dart';
 
 class MushafReaderScreen extends StatefulWidget {
   final String surahName;
@@ -25,39 +27,66 @@ class _MushafReaderScreenState extends State<MushafReaderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(widget.surahName), centerTitle: true),
-      body: FutureBuilder<List<AyahModel>>(
-        future: ayahsFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
+    final settings = AppSettingsController.instance;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bg = isDark ? AppColors.bgDark : AppColors.bgCard;
+    final textColor = isDark ? AppColors.primaryDark : AppColors.primaryLight;
 
-          if (snapshot.hasError) {
-            return const Center(child: Text("قم بتحميل السورة "));
-          }
+    return AnimatedBuilder(
+      animation: settings,
+      builder: (context, _) => Scaffold(
+        backgroundColor: bg,
+        appBar: AppBar(
+          title: Text(
+            widget.surahName,
+            style: TextStyle(
+              fontFamily: 'Cairo',
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+              color: textColor,
+            ),
+          ),
+          centerTitle: true,
+          backgroundColor: bg,
+        ),
+        body: FutureBuilder<List<AyahModel>>(
+          future: ayahsFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          final ayahs = snapshot.data!;
+            if (snapshot.hasError) {
+              return const Center(child: Text("قم بتحميل السورة "));
+            }
 
-          return ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: ayahs.length,
-            itemBuilder: (context, index) {
-              final ayah = ayahs[index];
+            final ayahs = snapshot.data!;
 
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                child: Text(
-                  "${ayah.text} (${ayah.numberInSurah})",
-                  textAlign: TextAlign.right,
-                  textDirection: TextDirection.rtl,
-                  style: const TextStyle(fontSize: 22, height: 1.8),
-                ),
-              );
-            },
-          );
-        },
+            return ListView.builder(
+              padding: const EdgeInsets.fromLTRB(26, 12, 26, 18),
+              itemCount: ayahs.length,
+              itemBuilder: (context, index) {
+                final ayah = ayahs[index];
+
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Text(
+                    "${ayah.text} ﴿${ayah.numberInSurah}﴾",
+                    textAlign: TextAlign.right,
+                    textDirection: TextDirection.rtl,
+                    style: TextStyle(
+                      fontFamily: 'Amiri',
+                      fontSize: settings.quranFontSize,
+                      height: 2.0,
+                      letterSpacing: 0.1,
+                      color: textColor,
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }
