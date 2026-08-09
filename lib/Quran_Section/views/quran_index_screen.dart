@@ -27,10 +27,13 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
   LastRead? _lastPosition;
   late TabController _tabController;
   final TextEditingController _searchController = TextEditingController();
+
+  // ── FIX 1: separate the full list from the filtered view ──────────
   List<SurahModel> _allSurahs = [];
   List<SurahModel> _filteredSurahs = [];
+  bool _isSearching = false; // true only while query is non-empty
+  // ─────────────────────────────────────────────────────────────────
 
-  // Tabs: السور، الأجزاء، المفضلة، الإشارات، الملاحظات
   final List<String> _tabs = [
     'السور',
     'الأجزاء',
@@ -63,7 +66,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
       if (mounted) {
         setState(() {
           _allSurahs = surahs;
-          _filteredSurahs = surahs;
+          _filteredSurahs = surahs; // initialise filtered = all
         });
       }
     } catch (e) {
@@ -82,22 +85,41 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
     }
   }
 
+  /// Strip Arabic diacritics so search works without tashkeel
+  String _stripDiacritics(String text) {
+    return text.replaceAll(
+      RegExp(
+        r'[\u064B-\u065F\u0610-\u061A\u06D6-\u06DC\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06ED]',
+      ),
+      '',
+    );
+  }
+
+  // ── FIX 1: correct filter logic ───────────────────────────────────
   void _filterSurahs(String query) {
+    final trimmed = query.trim();
     setState(() {
-      if (query.isEmpty) {
+      if (trimmed.isEmpty) {
+        // No query → show everything, leave search mode
+        _isSearching = false;
         _filteredSurahs = _allSurahs;
       } else {
-        _filteredSurahs = _allSurahs
-            .where(
-              (s) =>
-                  s.name.contains(query) ||
-                  s.englishName.toLowerCase().contains(query.toLowerCase()) ||
-                  s.number.toString().contains(query),
-            )
-            .toList();
+        _isSearching = true;
+        final q = _stripDiacritics(trimmed.toLowerCase());
+        _filteredSurahs = _allSurahs.where((s) {
+          final nameClean = _stripDiacritics(s.name).toLowerCase();
+          final engClean = s.englishName.toLowerCase();
+          // Also strip diacritics from the english transliteration field
+          final engTransClean = _stripDiacritics(s.englishName).toLowerCase();
+          return nameClean.contains(q) ||
+              engClean.contains(q) ||
+              engTransClean.contains(q) ||
+              s.number.toString() == trimmed;
+        }).toList();
       }
     });
   }
+  // ─────────────────────────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +132,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
             child: Column(
               children: [
                 _buildHeader(isDark),
-                _buildLastReadBanner(isDark),
+                _buildLastReadBanner(isDark), // FIX 2 below
                 _buildSearchBar(isDark),
                 _buildTabBar(isDark),
                 Expanded(child: _buildTabBarView(isDark)),
@@ -136,20 +158,36 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
     );
   }
 
+  // ── FIX 2: resolve surah name dynamically from _allSurahs ─────────
   Widget _buildLastReadBanner(bool isDark) {
     if (_lastPosition == null) return const SizedBox.shrink();
+
+    // Resolve surah name from the already-loaded list.
+    // Falls back to a generic label if list isn't loaded yet.
+    final surahNum = _lastPosition!.surahNumber;
+    String surahName = 'السورة $surahNum';
+    if (_allSurahs.isNotEmpty) {
+      final match = _allSurahs.where((s) => s.number == surahNum);
+      if (match.isNotEmpty) surahName = match.first.name;
+    }
+
+    // ayah number: we stored pageIndex, display it as a human label
+    final pageLabel = 'صفحة ${_lastPosition!.pageIndex + 1}';
+
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
+      onTap: () async {
+        await Navigator.push(
           context,
           MaterialPageRoute(
             builder: (_) => MushafPageViewScreen(
-              surahNumber: _lastPosition!.surahNumber,
-              restoreLastPosition: true,
+              surahNumber: surahNum,
+              restoreLastPosition: true, // ← tells screen to jump
               onPositionSaved: _loadLastPosition,
             ),
           ),
         );
+        // Refresh banner after returning
+        _loadLastPosition();
       },
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -168,7 +206,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
                 const Icon(Icons.arrow_back_ios, color: Colors.white, size: 14),
                 const SizedBox(width: 4),
                 Text(
-                  'آية ٤',
+                  pageLabel,
                   style: GoogleFonts.cairo(fontSize: 12, color: Colors.white70),
                 ),
               ],
@@ -185,8 +223,9 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
                   ),
                 ),
                 Text(
-                  'سورة هود',
-                  style: GoogleFonts.cairo(fontSize: 11, color: Colors.white70),
+                  surahName,
+                  textDirection: TextDirection.rtl,
+                  style: GoogleFonts.amiri(fontSize: 14, color: Colors.white70),
                 ),
               ],
             ),
@@ -196,6 +235,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
       ),
     );
   }
+  // ─────────────────────────────────────────────────────────────────
 
   Widget _buildSearchBar(bool isDark) {
     return Padding(
@@ -206,7 +246,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.04),
+              color: Colors.black.withValues(alpha: 0.04),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -232,6 +272,20 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
               color: AppColors.textMuted,
               size: 20,
             ),
+            // Show clear button when typing
+            suffixIcon: _isSearching
+                ? IconButton(
+                    icon: const Icon(
+                      Icons.clear,
+                      color: AppColors.textMuted,
+                      size: 18,
+                    ),
+                    onPressed: () {
+                      _searchController.clear();
+                      _filterSurahs('');
+                    },
+                  )
+                : null,
             border: InputBorder.none,
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,
@@ -281,77 +335,101 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
     );
   }
 
+  // ── FIX 1 (cont.): use _filteredSurahs directly ───────────────────
   Widget _buildSurahsList(bool isDark) {
-    return FutureBuilder<List<SurahModel>>(
-      future: surahsFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(color: AppColors.primary),
-          );
-        }
+    // While data is still loading, show spinner
+    if (_allSurahs.isEmpty) {
+      return FutureBuilder<List<SurahModel>>(
+        future: surahsFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(color: AppColors.primary),
+            );
+          }
+          if (snapshot.hasError) {
+            return _buildErrorState(isDark);
+          }
+          // Data arrived — will be reflected via setState in
+          // _checkConnectionAndFetch, trigger a rebuild
+          return const SizedBox.shrink();
+        },
+      );
+    }
 
-        if (snapshot.hasError) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(
-                  Icons.wifi_off,
-                  size: 64,
-                  color: AppColors.textMuted,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'تعذر الاتصال',
-                  style: GoogleFonts.cairo(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: isDark ? AppColors.textLight : AppColors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'تأكد من اتصالك بالإنترنت',
-                  style: GoogleFonts.cairo(color: AppColors.textSecondary),
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: _checkConnectionAndFetch,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: Text('إعادة المحاولة', style: GoogleFonts.cairo()),
-                ),
-              ],
+    // ── KEY FIX: use _filteredSurahs which is always correct ──────
+    final surahs = _filteredSurahs;
+
+    if (surahs.isEmpty && _isSearching) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.search_off, size: 48, color: AppColors.textMuted),
+            const SizedBox(height: 12),
+            Text(
+              'لا توجد نتائج لـ "${_searchController.text}"',
+              style: GoogleFonts.cairo(
+                fontSize: 15,
+                color: AppColors.textSecondary,
+              ),
             ),
-          );
-        }
+          ],
+        ),
+      );
+    }
 
-        final surahs = _filteredSurahs.isNotEmpty
-            ? _filteredSurahs
-            : (snapshot.data ?? []);
+    return ListView.separated(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      itemCount: surahs.length,
+      separatorBuilder: (_, __) => const Divider(height: 1, thickness: 0.4),
+      itemBuilder: (context, index) => _buildSurahTile(surahs[index], isDark),
+    );
+  }
+  // ─────────────────────────────────────────────────────────────────
 
-        return ListView.builder(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          itemCount: surahs.length,
-          itemBuilder: (context, index) {
-            final surah = surahs[index];
-            return _buildSurahTile(surah, isDark);
-          },
-        );
-      },
+  Widget _buildErrorState(bool isDark) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.wifi_off, size: 64, color: AppColors.textMuted),
+          const SizedBox(height: 16),
+          Text(
+            'تعذر الاتصال',
+            style: GoogleFonts.cairo(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: isDark ? AppColors.textLight : AppColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'تأكد من اتصالك بالإنترنت',
+            style: GoogleFonts.cairo(color: AppColors.textSecondary),
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: _checkConnectionAndFetch,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: Text('إعادة المحاولة', style: GoogleFonts.cairo()),
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildSurahTile(SurahModel surah, bool isDark) {
+    final isLastRead = _lastPosition?.surahNumber == surah.number;
     return InkWell(
-      onTap: () {
-        Navigator.push(
+      onTap: () async {
+        await Navigator.push(
           context,
           MaterialPageRoute(
             builder: (_) => MushafPageViewScreen(
@@ -360,9 +438,10 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
             ),
           ),
         );
+        _loadLastPosition();
       },
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.symmetric(vertical: 10),
         child: Row(
           children: [
             Expanded(
@@ -377,7 +456,8 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
                     ),
                   ),
                   Text(
-                    '${surah.numberOfAyahs} آية • ${surah.revelationType}',
+                    '${surah.numberOfAyahs} آية • '
+                    '${surah.revelationType == 'Meccan' ? 'مكية' : 'مدنية'}',
                     style: GoogleFonts.cairo(
                       fontSize: 11,
                       color: AppColors.textMuted,
@@ -386,6 +466,19 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
                 ],
               ),
             ),
+            if (isLastRead)
+              Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: Text(
+                  'آخر قراءة',
+                  style: GoogleFonts.cairo(
+                    fontSize: 10,
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            const SizedBox(width: 8),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
@@ -398,34 +491,30 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
                   ),
                   textDirection: TextDirection.rtl,
                 ),
-                Text(
-                  surah.revelationType,
-                  style: GoogleFonts.cairo(
-                    fontSize: 11,
-                    color: AppColors.textMuted,
-                  ),
-                ),
               ],
             ),
             const SizedBox(width: 12),
-            _buildSurahNumber(surah.number, isDark),
+            _buildSurahNumber(surah.number, isDark, isLastRead),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSurahNumber(int number, bool isDark) {
+  Widget _buildSurahNumber(int number, bool isDark, bool isLastRead) {
     return Container(
       width: 36,
       height: 36,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
+        color: isLastRead ? AppColors.primary.withValues(alpha: 0.12) : null,
         border: Border.all(
-          color: isDark
-              ? AppColors.accent.withOpacity(0.4)
-              : AppColors.primary.withOpacity(0.3),
-          width: 1.5,
+          color: isLastRead
+              ? AppColors.primary
+              : (isDark
+                    ? AppColors.accent.withValues(alpha: 0.4)
+                    : AppColors.primary.withValues(alpha: 0.3)),
+          width: isLastRead ? 1.8 : 1.5,
         ),
       ),
       child: Center(
@@ -453,7 +542,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
               color: isDark ? AppColors.bgCardDark : Colors.grey.shade100,
               shape: BoxShape.circle,
             ),
-            child: Icon(
+            child: const Icon(
               Icons.bookmark_border,
               size: 28,
               color: AppColors.textMuted,
@@ -643,7 +732,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
+                    color: Colors.black.withValues(alpha: 0.04),
                     blurRadius: 8,
                   ),
                 ],
@@ -785,7 +874,5 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
     );
   }
 
-  String _formatDate(DateTime date) {
-    return '${date.day}/${date.month}/${date.year}';
-  }
+  String _formatDate(DateTime date) => '${date.day}/${date.month}/${date.year}';
 }

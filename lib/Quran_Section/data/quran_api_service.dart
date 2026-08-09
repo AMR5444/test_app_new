@@ -30,9 +30,36 @@ class QuranApiService {
       'https://api.alquran.cloud/v1/surah/$surahNumber/quran-uthmani',
     );
 
-    final ayahs = response.data['data']['ayahs'] as List;
+    final ayahs = (response.data['data']['ayahs'] as List).where((e) {
+      final text = (e['text'] as String);
+      return text.trim().isNotEmpty;
+    }).toList();
 
-    final result = ayahs.map((e) => AyahModel.fromJson(e)).toList();
+    final result = ayahs.map((e) {
+      final rawText = (e['text'] as String).trim();
+
+      final isFirstAyah = e['numberInSurah'] == 1;
+
+      // سور لازم ما نشيلش منها حاجة
+      final isExcludedSurah = surahNumber == 1 || surahNumber == 9;
+
+      // تحديد البسملة بدقة أعلى
+      final isBasmala =
+          rawText.startsWith('بِسۡم') ||
+          rawText.startsWith('بسم الله') ||
+          rawText.contains('ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ');
+
+      final cleanedText = (isFirstAyah && !isExcludedSurah && isBasmala)
+          ? '' // نشيلها بالكامل من الداتا
+          : rawText;
+
+      return AyahModel(
+        number: e['number'],
+        numberInSurah: e['numberInSurah'],
+        text: cleanedText,
+        page: e['page'],
+      );
+    }).toList();
 
     await box.put(surahNumber, result.map((e) => e.toJson()).toList());
 

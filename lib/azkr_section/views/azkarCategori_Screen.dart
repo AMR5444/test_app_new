@@ -68,7 +68,9 @@ class AzkarCategoriesScreen extends StatelessWidget {
                         style: GoogleFonts.cairo(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
-                          color: isDark ? AppColors.textLight : AppColors.textPrimary,
+                          color: isDark
+                              ? AppColors.textLight
+                              : AppColors.textPrimary,
                         ),
                       ),
                       Text(
@@ -84,7 +86,10 @@ class AzkarCategoriesScreen extends StatelessWidget {
                 const SizedBox(height: 8),
                 Expanded(
                   child: ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
                     itemCount: categories.length,
                     itemBuilder: (context, index) {
                       final cat = categories[index];
@@ -132,7 +137,7 @@ class AzkarCategoriesScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.04),
+              color: Colors.black.withValues(alpha: 0.04),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -164,7 +169,9 @@ class AzkarCategoriesScreen extends StatelessWidget {
                     style: GoogleFonts.cairo(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: isDark ? AppColors.textLight : AppColors.textPrimary,
+                      color: isDark
+                          ? AppColors.textLight
+                          : AppColors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 2),

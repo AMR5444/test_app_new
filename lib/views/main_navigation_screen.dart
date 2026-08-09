@@ -38,10 +38,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         ];
 
         return Scaffold(
-          body: IndexedStack(
-            index: _currentIndex,
-            children: screens,
-          ),
+          body: IndexedStack(index: _currentIndex, children: screens),
           bottomNavigationBar: _buildBottomNav(isDark),
         );
       },
@@ -50,11 +47,31 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   Widget _buildBottomNav(bool isDark) {
     final items = [
-      {'icon': Icons.home_outlined, 'activeIcon': Icons.home, 'label': 'الرئيسية'},
-      {'icon': Icons.menu_book_outlined, 'activeIcon': Icons.menu_book, 'label': 'المصحف'},
-      {'icon': Icons.auto_awesome_outlined, 'activeIcon': Icons.auto_awesome, 'label': 'الأذكار'},
-      {'icon': Icons.explore_outlined, 'activeIcon': Icons.explore, 'label': 'القبلة'},
-      {'icon': Icons.settings_outlined, 'activeIcon': Icons.settings, 'label': 'الإعدادات'},
+      {
+        'icon': Icons.home_outlined,
+        'activeIcon': Icons.home,
+        'label': 'الرئيسية',
+      },
+      {
+        'icon': Icons.menu_book_outlined,
+        'activeIcon': Icons.menu_book,
+        'label': 'المصحف',
+      },
+      {
+        'icon': Icons.auto_awesome_outlined,
+        'activeIcon': Icons.auto_awesome,
+        'label': 'الأذكار',
+      },
+      {
+        'icon': Icons.explore_outlined,
+        'activeIcon': Icons.explore,
+        'label': 'القبلة',
+      },
+      {
+        'icon': Icons.settings_outlined,
+        'activeIcon': Icons.settings,
+        'label': 'الإعدادات',
+      },
     ];
 
     return Container(
@@ -62,7 +79,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         color: isDark ? AppColors.navBgDark : AppColors.navBg,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 16,
             offset: const Offset(0, -4),
           ),
@@ -82,11 +99,14 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                 behavior: HitTestBehavior.opaque,
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: isSelected
                       ? BoxDecoration(
                           color: isDark
-                              ? AppColors.accent.withOpacity(0.15)
+                              ? AppColors.accent.withValues(alpha: 0.15)
                               : AppColors.accentLight,
                           borderRadius: BorderRadius.circular(12),
                         )
@@ -108,7 +128,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                         item['label'] as String,
                         style: GoogleFonts.cairo(
                           fontSize: 10,
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.normal,
                           color: isSelected
                               ? (isDark ? AppColors.accent : AppColors.primary)
                               : AppColors.navUnselected,

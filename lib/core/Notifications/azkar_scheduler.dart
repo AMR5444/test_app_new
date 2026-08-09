@@ -36,7 +36,7 @@ Future<void> scheduleDailyAzkar() async {
     },
     {
       'id': 6,
-      'title': '😴 أذكار الاستيقاظ',
+      'title': ' أذكار الاستيقاظ',
       'body': 'حان وقت أذكار الاستيقاظ، لا تنسى قراءتها',
       'payload': 'أذكار الاستيقاظ',
       'hour': 6,

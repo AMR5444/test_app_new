@@ -40,7 +40,9 @@ class _AzkarScreenContent extends StatelessWidget {
             child: Column(
               children: [
                 _buildHeader(context, isDark),
-                Expanded(child: _AzkarList(isDark: isDark, category: category)),
+                Expanded(
+                  child: _AzkarList(isDark: isDark, category: category),
+                ),
               ],
             ),
           ),
@@ -56,9 +58,7 @@ class _AzkarScreenContent extends StatelessWidget {
         int total = 0;
         if (state is AzkarLoaded) {
           total = state.azkarList.length;
-          done = state.azkarList
-              .where((z) => z.currentCount == 0)
-              .length;
+          done = state.azkarList.where((z) => z.currentCount == 0).length;
         }
         final progress = total > 0 ? done / total : 0.0;
 
@@ -73,7 +73,9 @@ class _AzkarScreenContent extends StatelessWidget {
                     child: Icon(
                       Icons.arrow_forward_ios,
                       size: 18,
-                      color: isDark ? AppColors.textLight : AppColors.textPrimary,
+                      color: isDark
+                          ? AppColors.textLight
+                          : AppColors.textPrimary,
                     ),
                   ),
                   const Spacer(),
@@ -82,7 +84,9 @@ class _AzkarScreenContent extends StatelessWidget {
                     style: GoogleFonts.cairo(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: isDark ? AppColors.textLight : AppColors.textPrimary,
+                      color: isDark
+                          ? AppColors.textLight
+                          : AppColors.textPrimary,
                     ),
                   ),
                 ],
@@ -210,18 +214,18 @@ class _AzkarList extends StatelessWidget {
         decoration: BoxDecoration(
           color: isDone
               ? (isDark
-                  ? AppColors.primary.withOpacity(0.2)
-                  : AppColors.accentLight)
+                    ? AppColors.primary.withValues(alpha: 0.2)
+                    : AppColors.accentLight)
               : (isDark ? AppColors.bgCardDark : Colors.white),
           borderRadius: BorderRadius.circular(16),
           border: isDone
-              ? Border.all(color: AppColors.primary.withOpacity(0.3))
+              ? Border.all(color: AppColors.primary.withValues(alpha: 0.3))
               : null,
           boxShadow: isDone
               ? null
               : [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
+                    color: Colors.black.withValues(alpha: 0.04),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -240,7 +244,11 @@ class _AzkarList extends StatelessWidget {
                         shape: BoxShape.circle,
                         color: AppColors.primary,
                       ),
-                      child: const Icon(Icons.check, color: Colors.white, size: 20),
+                      child: const Icon(
+                        Icons.check,
+                        color: Colors.white,
+                        size: 20,
+                      ),
                     )
                   : Container(
                       width: 40,
@@ -250,7 +258,7 @@ class _AzkarList extends StatelessWidget {
                         color: AppColors.primary,
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.primary.withOpacity(0.3),
+                            color: AppColors.primary.withValues(alpha: 0.3),
                             blurRadius: 8,
                           ),
                         ],
@@ -275,7 +283,9 @@ class _AzkarList extends StatelessWidget {
                     height: 1.7,
                     color: isDone
                         ? (isDark ? AppColors.accent : AppColors.primary)
-                        : (isDark ? AppColors.textLight : AppColors.textPrimary),
+                        : (isDark
+                              ? AppColors.textLight
+                              : AppColors.textPrimary),
                   ),
                   textDirection: TextDirection.rtl,
                   textAlign: TextAlign.right,
@@ -313,7 +323,7 @@ class _AzkarList extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'أتممت أذكار الصلاة',
+            'أتممت أذكارك',
             style: GoogleFonts.cairo(
               fontSize: 14,
               color: AppColors.textSecondary,
