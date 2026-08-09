@@ -6,6 +6,7 @@ import 'package:test_app_new/Quran_Section/data/LastPositionService.dart';
 import 'package:test_app_new/Quran_Section/data/bookmark_service.dart';
 import 'package:test_app_new/Quran_Section/data/note_service.dart';
 import 'package:test_app_new/Quran_Section/data/quran_api_service.dart';
+import 'package:test_app_new/Quran_Section/madani_mushaf/view/madani_mushaf_page_view.dart';
 import 'package:test_app_new/Quran_Section/models/LastRead_model.dart';
 import 'package:test_app_new/Quran_Section/models/bookmark_model.dart';
 import 'package:test_app_new/Quran_Section/models/note_model.dart';
@@ -128,6 +129,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
         final isDark = settings.isDarkMode;
         return Scaffold(
           backgroundColor: isDark ? AppColors.bgDark : AppColors.bgLight,
+
           body: SafeArea(
             child: Column(
               children: [
@@ -179,7 +181,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
         await Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => MushafPageViewScreen(
+            builder: (_) => MadaniMushafPageView(
               surahNumber: surahNum,
               restoreLastPosition: true, // ← tells screen to jump
               onPositionSaved: _loadLastPosition,
@@ -189,6 +191,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
         // Refresh banner after returning
         _loadLastPosition();
       },
+
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -432,7 +435,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
         await Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => MushafPageViewScreen(
+            builder: (_) => MadaniMushafPageView(
               surahNumber: surah.number,
               onPositionSaved: _loadLastPosition,
             ),
@@ -619,7 +622,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => MushafPageViewScreen(
+                    builder: (_) => MadaniMushafPageView(
                       surahNumber: ayah['surahNumber'],
                       highlightAyahNumber: ayah['ayahNumber'],
                       onPositionSaved: _loadLastPosition,
@@ -688,7 +691,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => MushafPageViewScreen(
+                    builder: (_) => MadaniMushafPageView(
                       surahNumber: bookmark.surahNumber,
                       highlightAyahNumber: bookmark.ayahNumber,
                       onPositionSaved: _loadLastPosition,
@@ -793,7 +796,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
                               onPressed: () => Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => MushafPageViewScreen(
+                                  builder: (_) => MadaniMushafPageView(
                                     surahNumber: note.surahNumber,
                                     highlightAyahNumber: note.ayahNumber,
                                     onPositionSaved: _loadLastPosition,
