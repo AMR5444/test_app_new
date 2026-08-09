@@ -11,7 +11,6 @@ import 'package:test_app_new/Quran_Section/models/LastRead_model.dart';
 import 'package:test_app_new/Quran_Section/models/bookmark_model.dart';
 import 'package:test_app_new/Quran_Section/models/note_model.dart';
 import 'package:test_app_new/Quran_Section/models/surah_model.dart';
-import 'package:test_app_new/Quran_Section/views/mushaf_page_view_screen.dart';
 import 'package:test_app_new/core/settings/settings_cubit.dart';
 import 'package:test_app_new/core/theme/app_theme.dart';
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:qcf_quran_plus/qcf_quran_plus.dart';
 import 'package:test_app_new/views/main_navigation_screen.dart';
 import 'package:test_app_new/azkr_section/logic/azkar_cubit.dart';
 import 'package:test_app_new/azkr_section/views/azkarCategori_Screen.dart';
@@ -31,7 +32,7 @@ void main() async {
 
   await requestNotificationPermission();
   await scheduleDailyAzkar();
-
+  await QcfFontLoader.setupFontsAtStartup(onProgress: (double progress) {});
   runApp(const MyApp());
 }
 
@@ -59,7 +60,7 @@ class MyApp extends StatelessWidget {
               '/azkar': (context) {
                 final category =
                     ModalRoute.of(context)?.settings.arguments as String? ??
-                        'أذكار';
+                    'أذكار';
                 return Scaffold(
                   appBar: AppBar(title: Text(category), centerTitle: true),
                   body: AzkarCategoriesScreen(),

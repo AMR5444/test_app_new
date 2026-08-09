@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:qcf_quran_plus/qcf_quran_plus.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:test_app_new/Quran_Section/data/Tafsir_api_Service.dart';
 import 'package:test_app_new/Quran_Section/data/audio_service.dart';
@@ -13,6 +14,8 @@ import 'package:test_app_new/Quran_Section/models/note_model.dart';
 
 const Color _kTextLight = Color(0xFFFFFFFF);
 const Color _kTextPrimary = Color(0xFF1A1A1A);
+const Color _kHeaderGreen = Color(0xFF1A5C38);
+const Color _kGold = Color(0xFFC5A028);
 
 void showAyahOptionsSheet(
   BuildContext context, {
@@ -23,10 +26,10 @@ void showAyahOptionsSheet(
     context: context,
     isScrollControlled: true,
     backgroundColor: Theme.of(context).brightness == Brightness.dark
-        ? const Color(0xFF1C2B20)
-        : const Color(0xfff5f0e1),
+        ? const Color(0xFF14231A)
+        : const Color(0xFFFDF8EE),
     shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
     ),
     builder: (sheetContext) {
       return SafeArea(
@@ -35,7 +38,8 @@ void showAyahOptionsSheet(
           minChildSize: 0.35,
           maxChildSize: 0.92,
           expand: false,
-          builder: (context, scrollController) {
+          builder: (_, scrollController) {
+            final isDark = Theme.of(context).brightness == Brightness.dark;
             return Padding(
               padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
               child: Column(
@@ -45,9 +49,9 @@ void showAyahOptionsSheet(
                     child: Container(
                       width: 40,
                       height: 4,
-                      margin: const EdgeInsets.only(bottom: 12),
+                      margin: const EdgeInsets.only(bottom: 14),
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade400,
+                        color: _kGold.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -56,41 +60,81 @@ void showAyahOptionsSheet(
                     children: [
                       GestureDetector(
                         onTap: () => Navigator.pop(context),
-                        child: const Icon(
-                          Icons.close,
-                          size: 20,
-                          color: Color(0xFF6B7280),
+                        child: Container(
+                          width: 30,
+                          height: 30,
+                          decoration: BoxDecoration(
+                            color: (isDark ? Colors.white : _kHeaderGreen)
+                                .withValues(alpha: 0.08),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Icon(
+                            Icons.close,
+                            size: 18,
+                            color: isDark ? _kTextLight : _kHeaderGreen,
+                          ),
                         ),
                       ),
                       const Spacer(),
                       Text(
                         'خيارات الآية',
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 15,
                           fontWeight: FontWeight.bold,
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? _kTextLight
-                              : _kTextPrimary,
+                          color: isDark ? _kTextLight : _kHeaderGreen,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: _kGold.withValues(alpha: 0.6),
+                          ),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          'آية ${ayah.numberInSurah}',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? _kGold : _kHeaderGreen,
+                          ),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    ayah.text,
-                    textAlign: TextAlign.right,
-                    textDirection: TextDirection.rtl,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 16,
-                      height: 1.6,
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? _kTextLight
-                          : _kTextPrimary,
+                  const SizedBox(height: 14),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 18,
+                    ),
+                    decoration: BoxDecoration(
+                      color: (isDark ? Colors.white : _kHeaderGreen).withValues(
+                        alpha: 0.05,
+                      ),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: _kGold.withValues(alpha: 0.25)),
+                    ),
+                    child: Text(
+                      ayah.text,
+                      textAlign: TextAlign.center,
+                      textDirection: TextDirection.rtl,
+                      maxLines: 4,
+                      overflow: TextOverflow.ellipsis,
+                      style: QuranTextStyles.hafsStyle(
+                        fontSize: 22,
+                        height: 1.9,
+                        color: isDark ? _kTextLight : _kTextPrimary,
+                      ),
                     ),
                   ),
-                  const Divider(height: 24),
+                  Divider(height: 28, color: _kGold.withValues(alpha: 0.2)),
                   Expanded(
                     child: ListView(
                       controller: scrollController,
@@ -174,7 +218,7 @@ void showAyahOptionsSheet(
                               PageRouteBuilder(
                                 opaque: false,
                                 barrierDismissible: false,
-                                pageBuilder: (c, _, __) => const Center(
+                                pageBuilder: (c, _, _) => const Center(
                                   child: CircularProgressIndicator(),
                                 ),
                               ),
@@ -303,13 +347,11 @@ void showAyahOptionsSheet(
                                                             textDirection:
                                                                 TextDirection
                                                                     .rtl,
+
                                                             style:
-                                                                const TextStyle(
-                                                                  fontSize: 20,
+                                                                QuranTextStyles.hafsStyle(
+                                                                  fontSize: 22,
                                                                   height: 2,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
                                                                 ),
                                                           ),
                                                           const Divider(

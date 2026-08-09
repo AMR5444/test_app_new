@@ -84,13 +84,23 @@ class _HomeScreenState extends State<HomeScreen> {
   String _getHijriDate() {
     // Returns a static Hijri date string (dynamic impl requires a package)
     final now = DateTime.now();
-    final days = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+    final days = [
+      'الأحد',
+      'الاثنين',
+      'الثلاثاء',
+      'الأربعاء',
+      'الخميس',
+      'الجمعة',
+      'السبت',
+    ];
     return '${days[now.weekday % 7]} • ١٢ رمضان ١٤٤٧';
   }
 
   String _getCurrentTime() {
     final now = DateTime.now();
-    final hour = now.hour > 12 ? now.hour - 12 : (now.hour == 0 ? 12 : now.hour);
+    final hour = now.hour > 12
+        ? now.hour - 12
+        : (now.hour == 0 ? 12 : now.hour);
     final minute = now.minute.toString().padLeft(2, '0');
     final ampm = now.hour >= 12 ? 'م' : 'ص';
     return '$hour:$minute $ampm';
@@ -308,13 +318,19 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               GestureDetector(
                 onTap: () {
-                  SharePlus.instance.share(ShareParams(
-                    text: '${_dailyAyah['text']}\n— ${_dailyAyah['source']}',
-                  ));
+                  SharePlus.instance.share(
+                    ShareParams(
+                      text: '${_dailyAyah['text']}\n— ${_dailyAyah['source']}',
+                    ),
+                  );
                 },
                 child: Row(
                   children: [
-                    const Icon(Icons.share_outlined, size: 16, color: AppColors.textSecondary),
+                    const Icon(
+                      Icons.share_outlined,
+                      size: 16,
+                      color: AppColors.textSecondary,
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       'مشاركة',
@@ -439,7 +455,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     style: GoogleFonts.cairo(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
-                      color: isDark ? AppColors.textLight : AppColors.textPrimary,
+                      color: isDark
+                          ? AppColors.textLight
+                          : AppColors.textPrimary,
                     ),
                   ),
                 ],
@@ -467,13 +485,15 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: AppColors.primary.withOpacity(0.15),
-            ),
+            border: Border.all(color: AppColors.primary.withOpacity(0.15)),
           ),
           child: Row(
             children: [
-              const Icon(Icons.arrow_back_ios, size: 14, color: AppColors.primary),
+              const Icon(
+                Icons.arrow_back_ios,
+                size: 14,
+                color: AppColors.primary,
+              ),
               const Spacer(),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -540,21 +560,25 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 12),
           Row(
             children: [
-              Expanded(child: _buildStatCard(
-                isDark: isDark,
-                label: 'القراءة',
-                value: '$_readingMinutes د',
-                subtitle: 'هدف $_readingTarget د',
-                progress: _readingMinutes / _readingTarget,
-              )),
+              Expanded(
+                child: _buildStatCard(
+                  isDark: isDark,
+                  label: 'القراءة',
+                  value: '$_readingMinutes د',
+                  subtitle: 'هدف $_readingTarget د',
+                  progress: _readingMinutes / _readingTarget,
+                ),
+              ),
               const SizedBox(width: 12),
-              Expanded(child: _buildStatCard(
-                isDark: isDark,
-                label: 'الأذكار',
-                value: '${(_azkarDone / _azkarTotal * 100).round()}٪',
-                subtitle: '$_azkarDone من $_azkarTotal',
-                progress: _azkarDone / _azkarTotal,
-              )),
+              Expanded(
+                child: _buildStatCard(
+                  isDark: isDark,
+                  label: 'الأذكار',
+                  value: '${(_azkarDone / _azkarTotal * 100).round()}٪',
+                  subtitle: '$_azkarDone من $_azkarTotal',
+                  progress: _azkarDone / _azkarTotal,
+                ),
+              ),
             ],
           ),
         ],
