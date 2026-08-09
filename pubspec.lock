@@ -17,6 +17,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.4.1"
+  archive:
+    dependency: transitive
+    description:
+      name: archive
+      sha256: a96e8b390886ee8abb49b7bd3ac8df6f451c621619f52a26e815fdcf568959ff
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.0.9"
   args:
     dependency: transitive
     description:
@@ -880,6 +888,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.5.2"
+  posix:
+    dependency: transitive
+    description:
+      name: posix
+      sha256: bc1bad54ad2b735816e31f8d4600cfde6c7839975085ddfbca48b6c9f7c4044e
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.5.2"
   provider:
     dependency: transitive
     description:
@@ -904,6 +920,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.5.0"
+  qcf_quran_plus:
+    dependency: "direct main"
+    description:
+      name: qcf_quran_plus
+      sha256: a1a3dbe3ce0cdd9298dfc59cc00bb1c0f6405d19fce9cf1bf222588b9555b9ce
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.8"
   record_use:
     dependency: transitive
     description:
@@ -920,6 +944,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.28.0"
+  scrollable_positioned_list:
+    dependency: transitive
+    description:
+      name: scrollable_positioned_list
+      sha256: "1b54d5f1329a1e263269abc9e2543d90806131aa14fe7c6062a8054d57249287"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.8"
   share_plus:
     dependency: "direct main"
     description:

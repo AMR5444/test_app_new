@@ -2,22 +2,29 @@ const String kBasmalaText = 'بِسْمِ اللَّهِ الرَّحْمَٰن�
 
 class MushafWordModel {
   final String text;
+  final int surahNumber;
   final int ayahNumberInSurah;
 
-  MushafWordModel({required this.text, required this.ayahNumberInSurah});
+  MushafWordModel({
+    required this.text,
+    required this.surahNumber,
+    required this.ayahNumberInSurah,
+  });
 
   factory MushafWordModel.fromJson(Map<String, dynamic> json) {
+    // location format from source data: "surah:ayah:word" مثل "2:1:1"
     final location = (json['location'] as String).split(':');
 
     return MushafWordModel(
       text: json['word'] as String,
+      surahNumber: int.parse(location[0]),
       ayahNumberInSurah: int.parse(location[1]),
     );
   }
 
   Map<String, dynamic> toJson() => {
     'word': text,
-    'location': '0:$ayahNumberInSurah:0',
+    'location': '$surahNumber:$ayahNumberInSurah:0',
   };
 }
 
@@ -25,12 +32,14 @@ class MushafLineModel {
   final int line;
   final String type;
   final String? surahHeaderText;
+  final int? surahHeaderNumber;
   final List<MushafWordModel> words;
 
   MushafLineModel({
     required this.line,
     required this.type,
     this.surahHeaderText,
+    this.surahHeaderNumber,
     this.words = const [],
   });
 
@@ -42,6 +51,9 @@ class MushafLineModel {
       line: json['line'] as int,
       type: type,
       surahHeaderText: type == 'surah-header' ? json['text'] as String? : null,
+      surahHeaderNumber: type == 'surah-header'
+          ? int.tryParse(json['surah']?.toString() ?? '')
+          : null,
       words:
           wordsJson
               ?.map(
@@ -58,6 +70,7 @@ class MushafLineModel {
     'line': line,
     'type': type,
     'text': surahHeaderText,
+    'surah': surahHeaderNumber?.toString(),
     'words': words.map((w) => w.toJson()).toList(),
   };
 }

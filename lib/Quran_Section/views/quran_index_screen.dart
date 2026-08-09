@@ -174,7 +174,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
     }
 
     // ayah number: we stored pageIndex, display it as a human label
-    final pageLabel = 'صفحة ${_lastPosition!.pageIndex + 1}';
+    final pageLabel = 'صفحة ${_lastPosition!.pageIndex}';
 
     return GestureDetector(
       onTap: () async {
