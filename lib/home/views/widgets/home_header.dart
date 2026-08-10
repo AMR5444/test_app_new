@@ -1,25 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:test_app_new/core/theme/app_theme.dart';
+import 'package:test_app_new/home/logic/home_cubit.dart';
+import 'package:test_app_new/home/logic/home_state.dart';
 
 class HomeHeader extends StatelessWidget {
   final bool isDark;
 
   const HomeHeader({super.key, required this.isDark});
-
-  String _getHijriDate() {
-    final now = DateTime.now();
-    final days = [
-      'الأحد',
-      'الاثنين',
-      'الثلاثاء',
-      'الأربعاء',
-      'الخميس',
-      'الجمعة',
-      'السبت',
-    ];
-    return '${days[now.weekday % 7]} • ١٢ رمضان ١٤٤٧';
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,17 +48,75 @@ class HomeHeader extends StatelessWidget {
                   color: isDark ? AppColors.textLight : AppColors.textPrimary,
                 ),
               ),
-              Text(
-                _getHijriDate(),
-                style: GoogleFonts.cairo(
-                  fontSize: 12,
-                  color: AppColors.textSecondary,
-                ),
-              ),
+              const SizedBox(height: 2),
+              _DateInfo(isDark: isDark),
+              const SizedBox(height: 2),
+              _CurrentTimeText(isDark: isDark),
             ],
           ),
         ],
       ),
+    );
+  }
+}
+
+class _DateInfo extends StatelessWidget {
+  final bool isDark;
+
+  const _DateInfo({required this.isDark});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<HomeCubit, HomeState>(
+      buildWhen: (previous, current) =>
+          previous.dateHeader != current.dateHeader ||
+          previous.hijriDate != current.hijriDate,
+      builder: (context, state) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              state.dateHeader,
+              style: GoogleFonts.cairo(
+                fontSize: 13,
+                color: isDark ? AppColors.textLight : AppColors.textPrimary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            Text(
+              state.hijriDate,
+              style: GoogleFonts.cairo(
+                fontSize: 12,
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _CurrentTimeText extends StatelessWidget {
+  final bool isDark;
+
+  const _CurrentTimeText({required this.isDark});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<HomeCubit, HomeState>(
+      buildWhen: (previous, current) =>
+          previous.currentTime != current.currentTime,
+      builder: (context, state) {
+        return Text(
+          state.currentTime,
+          style: GoogleFonts.cairo(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: isDark ? AppColors.textLight : AppColors.textPrimary,
+          ),
+        );
+      },
     );
   }
 }

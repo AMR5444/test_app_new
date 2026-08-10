@@ -55,6 +55,7 @@ dependencies:
   scrollable_positioned_list: ^0.3.8
   adhan_dart: ^2.0.1
   flutter_timezone: ^5.1.0
+  hijri: ^3.0.0
 
 
 dev_dependencies:
