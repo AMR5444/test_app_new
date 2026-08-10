@@ -365,9 +365,9 @@ void showAyahOptionsSheet(
                                                                 TextDirection
                                                                     .rtl,
                                                             style:
-                                                                const TextStyle(
-                                                                  fontSize: 16,
-                                                                  height: 1.8,
+                                                                QuranTextStyles.hafsStyle(
+                                                                  fontSize: 22,
+                                                                  height: 2,
                                                                 ),
                                                           ),
                                                         ],
