@@ -4,7 +4,7 @@ import 'package:test_app_new/core/theme/app_theme.dart';
 
 class PrayerTimesCard extends StatelessWidget {
   final bool isDark;
-  final Map<String, String> prayerTimes;
+  final Map prayerTimes;
   final String nextPrayer;
   final String nextPrayerTime;
   final String countdown;
@@ -27,10 +27,9 @@ class PrayerTimesCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const prayers = ['الفجر', 'الشروق', 'الظهر', 'العصر', 'المغرب', 'العشاء'];
-    final status = errorMessage ??
-        (isLoading
-            ? 'جارٍ تحديد الموقع...'
-            : 'متبقي ${countdown.isEmpty ? '--:--:--' : countdown}');
+
+    final hasData = prayerTimes.isNotEmpty;
+    final showLoading = !hasData && errorMessage == null;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -60,7 +59,10 @@ class PrayerTimesCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      status,
+                      errorMessage ??
+                          (showLoading
+                              ? 'جارٍ تحميل مواقيت الصلاة...'
+                              : 'متبقي ${countdown.isEmpty ? '' : countdown}'),
                       style: GoogleFonts.cairo(
                         fontSize: 12,
                         color: Colors.white60,
@@ -71,20 +73,26 @@ class PrayerTimesCard extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text(
-                      'الصلاة القادمة • ${nextPrayer.isEmpty ? '--' : nextPrayer}',
-                      style: GoogleFonts.cairo(
-                        fontSize: 12,
-                        color: Colors.white70,
+                    Opacity(
+                      opacity: hasData ? 1.0 : 0.0,
+                      child: Text(
+                        'الصلاة القادمة • ${nextPrayer.isEmpty ? '' : nextPrayer}',
+                        style: GoogleFonts.cairo(
+                          fontSize: 12,
+                          color: Colors.white70,
+                        ),
                       ),
                     ),
-                    Text(
-                      nextPrayerTime.isEmpty ? '--:--' : nextPrayerTime,
-                      style: GoogleFonts.cairo(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        height: 1.1,
+                    Opacity(
+                      opacity: hasData ? 1.0 : 0.0,
+                      child: Text(
+                        nextPrayerTime.isEmpty ? '' : nextPrayerTime,
+                        style: GoogleFonts.cairo(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          height: 1.1,
+                        ),
                       ),
                     ),
                   ],
@@ -94,7 +102,7 @@ class PrayerTimesCard extends StatelessWidget {
             const SizedBox(height: 16),
             Row(
               children: prayers.map((name) {
-                final isNext = name == nextPrayer;
+                final isNext = hasData && name == nextPrayer;
                 return Expanded(
                   child: Column(
                     children: [
@@ -123,16 +131,19 @@ class PrayerTimesCard extends StatelessWidget {
                                     : FontWeight.normal,
                               ),
                             ),
-                            Text(
-                              prayerTimes[name] ?? '--:--',
-                              style: GoogleFonts.cairo(
-                                fontSize: 9,
-                                color: isNext
-                                    ? AppColors.primary
-                                    : Colors.white60,
-                                fontWeight: isNext
-                                    ? FontWeight.bold
-                                    : FontWeight.normal,
+                            Opacity(
+                              opacity: hasData ? 1.0 : 0.0,
+                              child: Text(
+                                prayerTimes[name] ?? '',
+                                style: GoogleFonts.cairo(
+                                  fontSize: 9,
+                                  color: isNext
+                                      ? AppColors.primary
+                                      : Colors.white60,
+                                  fontWeight: isNext
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                                ),
                               ),
                             ),
                           ],

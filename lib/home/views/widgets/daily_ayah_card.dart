@@ -5,22 +5,32 @@ import 'package:test_app_new/core/theme/app_theme.dart';
 
 class DailyAyahCard extends StatelessWidget {
   final bool isDark;
+  final String? ayahText;
+  final String? ayahSource;
 
-  const DailyAyahCard({super.key, required this.isDark});
+  const DailyAyahCard({
+    super.key,
+    required this.isDark,
+    this.ayahText,
+    this.ayahSource,
+  });
 
-  static const Map<String, String> _dailyAyah = {
+  static const Map<String, String> _fallbackAyah = {
     'text': 'فَاذْكُرُونِي أَذْكُرْكُمْ وَاشْكُرُوا لِي وَلَا تَكْفُرُونِ',
     'source': 'سورة البقرة • ١٥٢',
   };
 
-  void _shareAyah() {
-    SharePlus.instance.share(
-      ShareParams(text: '${_dailyAyah['text']}\n— ${_dailyAyah['source']}'),
-    );
+  void _shareAyah(BuildContext context) {
+    final text = ayahText ?? _fallbackAyah['text']!;
+    final source = ayahSource ?? _fallbackAyah['source']!;
+    SharePlus.instance.share(ShareParams(text: '$text\n— $source'));
   }
 
   @override
   Widget build(BuildContext context) {
+    final text = ayahText ?? _fallbackAyah['text']!;
+    final source = ayahSource ?? _fallbackAyah['source']!;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(
@@ -29,7 +39,7 @@ class DailyAyahCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               GestureDetector(
-                onTap: _shareAyah,
+                onTap: () => _shareAyah(context),
                 child: Row(
                   children: [
                     const Icon(
@@ -76,7 +86,7 @@ class DailyAyahCard extends StatelessWidget {
             child: Column(
               children: [
                 Text(
-                  _dailyAyah['text']!,
+                  text,
                   textAlign: TextAlign.center,
                   textDirection: TextDirection.rtl,
                   style: GoogleFonts.amiri(
@@ -87,7 +97,7 @@ class DailyAyahCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  '— ${_dailyAyah['source']} —',
+                  '— $source —',
                   style: GoogleFonts.cairo(
                     fontSize: 12,
                     color: AppColors.textSecondary,

@@ -31,6 +31,15 @@ class HomeScreen extends StatelessWidget {
                   children: [
                     HomeHeader(isDark: isDark),
                     BlocBuilder<HomeCubit, HomeState>(
+                      buildWhen: (previous, current) =>
+                          previous.prayerTimes != current.prayerTimes ||
+                          previous.nextPrayer != current.nextPrayer ||
+                          previous.nextPrayerTime != current.nextPrayerTime ||
+                          previous.prayerCountdown != current.prayerCountdown ||
+                          previous.prayerLocation != current.prayerLocation ||
+                          previous.isPrayerTimesLoading !=
+                              current.isPrayerTimesLoading ||
+                          previous.prayerTimesError != current.prayerTimesError,
                       builder: (context, state) => PrayerTimesCard(
                         isDark: isDark,
                         prayerTimes: state.prayerTimes,
@@ -42,9 +51,21 @@ class HomeScreen extends StatelessWidget {
                         errorMessage: state.prayerTimesError,
                       ),
                     ),
-                    DailyAyahCard(isDark: isDark),
+                    BlocBuilder<HomeCubit, HomeState>(
+                      buildWhen: (previous, current) =>
+                          previous.dailyAyahText != current.dailyAyahText ||
+                          previous.dailyAyahSource != current.dailyAyahSource,
+                      builder: (context, state) => DailyAyahCard(
+                        isDark: isDark,
+                        ayahText: state.dailyAyahText,
+                        ayahSource: state.dailyAyahSource,
+                      ),
+                    ),
                     QuickAccessGrid(isDark: isDark, onNavigate: onNavigate),
                     BlocBuilder<HomeCubit, HomeState>(
+                      buildWhen: (previous, current) =>
+                          previous.lastPosition != current.lastPosition ||
+                          previous.lastSurah != current.lastSurah,
                       builder: (context, state) {
                         return LastReadCard(
                           isDark: isDark,

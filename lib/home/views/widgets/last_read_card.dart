@@ -59,8 +59,8 @@ class LastReadCard extends StatelessWidget {
                   ),
                   Text(
                     lastSurah != null
-                        ? '${lastSurah!.name} • آية ${lastPosition!.pageIndex + 1}'
-                        : 'سورة الكهف • آية ٢٤',
+                        ? '${lastSurah!.name} • صفحة ${lastPosition!.pageIndex + 1}'
+                        : 'سورة ${lastPosition!.surahNumber} • صفحة ${lastPosition!.pageIndex + 1}',
                     style: GoogleFonts.cairo(
                       fontSize: 12,
                       color: AppColors.textSecondary,
@@ -78,7 +78,7 @@ class LastReadCard extends StatelessWidget {
                 ),
                 child: Center(
                   child: Text(
-                    '١٨',
+                    _toArabicNumbers(lastPosition!.surahNumber.toString()),
                     style: GoogleFonts.cairo(
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
@@ -92,5 +92,13 @@ class LastReadCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _toArabicNumbers(String input) {
+    const arabic = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+    return input.split('').map((c) {
+      final code = c.codeUnitAt(0);
+      return (code >= 48 && code <= 57) ? arabic[code - 48] : c;
+    }).join();
   }
 }

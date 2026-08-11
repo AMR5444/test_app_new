@@ -4,6 +4,7 @@ import 'package:test_app_new/Quran_Section/data/LastPositionService.dart';
 import 'package:test_app_new/Quran_Section/data/daily_reading_service.dart';
 import 'package:test_app_new/Quran_Section/data/quran_api_service.dart';
 import 'package:test_app_new/azkr_section/data/daily_azkar_progress_service.dart';
+import 'package:test_app_new/home/data/daily_ayah_service.dart';
 import 'package:test_app_new/home/data/home_date_time_service.dart';
 import 'package:test_app_new/home/data/prayer_times_service.dart';
 import 'package:test_app_new/home/logic/home_state.dart';
@@ -13,21 +14,24 @@ class HomeCubit extends Cubit<HomeState> {
   final HomeDateTimeService _dateTimeService;
   final PrayerTimesService _prayerTimesService;
   final DailyAzkarProgressService _dailyAzkarProgressService;
+  final DailyAyahService _dailyAyahService;
 
   HomeCubit({
     HomeDateTimeService? dateTimeService,
     PrayerTimesService? prayerTimesService,
     DailyAzkarProgressService? dailyAzkarProgressService,
+    DailyAyahService? dailyAyahService,
   }) : _dateTimeService = dateTimeService ?? HomeDateTimeService(),
        _prayerTimesService = prayerTimesService ?? PrayerTimesService(),
        _dailyAzkarProgressService =
            dailyAzkarProgressService ?? DailyAzkarProgressService(),
+       _dailyAyahService = dailyAyahService ?? DailyAyahService(),
        super(const HomeState()) {
     Future.microtask(_init);
   }
 
   Timer? _timer;
-  StreamSubscription<void>? _azkarStatsSubscription;
+  StreamSubscription? _azkarStatsSubscription;
   DateTime? _lastReadingStatsRefresh;
 
   Future<void> _init() async {
@@ -35,6 +39,7 @@ class HomeCubit extends Cubit<HomeState> {
     _updateHomeData();
     _loadLastPosition();
     _loadPrayerTimes();
+    _loadDailyAyah();
     _azkarStatsSubscription = _dailyAzkarProgressService.changes.listen(
       (_) => _loadTodayAzkarStats(),
     );
@@ -67,7 +72,13 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   void _refreshTodayReadingMinutes(DateTime now) {
-    final currentMinute = DateTime(now.year, now.month, now.day, now.hour, now.minute);
+    final currentMinute = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      now.hour,
+      now.minute,
+    );
     if (_lastReadingStatsRefresh == currentMinute) return;
 
     _lastReadingStatsRefresh = currentMinute;
@@ -125,6 +136,15 @@ class HomeCubit extends Cubit<HomeState> {
       clearPrayerTimesError: true,
     ),
   );
+
+  Future<void> _loadDailyAyah() async {
+    final ayah = await _dailyAyahService.getDailyAyah();
+    if (!isClosed) {
+      emit(
+        state.copyWith(dailyAyahText: ayah.text, dailyAyahSource: ayah.source),
+      );
+    }
+  }
 
   Future<void> _loadLastPosition() async {
     final lastPos = await LastPositionService.getLastPosition();

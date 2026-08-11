@@ -9,7 +9,7 @@ class HomeState extends Equatable {
   final String currentTime;
   final String dateHeader;
   final String hijriDate;
-  final Map<String, String> prayerTimes;
+  final Map prayerTimes;
   final String nextPrayer;
   final String nextPrayerTime;
   final String prayerCountdown;
@@ -19,6 +19,8 @@ class HomeState extends Equatable {
   final int todayReadingMinutes;
   final int todayAzkarCompleted;
   final int todayAzkarTotal;
+  final String dailyAyahText;
+  final String dailyAyahSource;
 
   const HomeState({
     this.lastPosition,
@@ -37,6 +39,8 @@ class HomeState extends Equatable {
     this.todayReadingMinutes = 0,
     this.todayAzkarCompleted = 0,
     this.todayAzkarTotal = 0,
+    this.dailyAyahText = '',
+    this.dailyAyahSource = '',
   });
 
   HomeState copyWith({
@@ -46,7 +50,7 @@ class HomeState extends Equatable {
     String? currentTime,
     String? dateHeader,
     String? hijriDate,
-    Map<String, String>? prayerTimes,
+    Map? prayerTimes,
     String? nextPrayer,
     String? nextPrayerTime,
     String? prayerCountdown,
@@ -57,6 +61,8 @@ class HomeState extends Equatable {
     int? todayReadingMinutes,
     int? todayAzkarCompleted,
     int? todayAzkarTotal,
+    String? dailyAyahText,
+    String? dailyAyahSource,
   }) {
     return HomeState(
       lastPosition: lastPosition ?? this.lastPosition,
@@ -77,6 +83,8 @@ class HomeState extends Equatable {
       todayReadingMinutes: todayReadingMinutes ?? this.todayReadingMinutes,
       todayAzkarCompleted: todayAzkarCompleted ?? this.todayAzkarCompleted,
       todayAzkarTotal: todayAzkarTotal ?? this.todayAzkarTotal,
+      dailyAyahText: dailyAyahText ?? this.dailyAyahText,
+      dailyAyahSource: dailyAyahSource ?? this.dailyAyahSource,
     );
   }
 
@@ -98,5 +106,7 @@ class HomeState extends Equatable {
     todayReadingMinutes,
     todayAzkarCompleted,
     todayAzkarTotal,
+    dailyAyahText,
+    dailyAyahSource,
   ];
 }
