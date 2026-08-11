@@ -12,10 +12,25 @@ import 'package:test_app_new/core/settings/settings_cubit.dart';
 const Color _kHeaderBg = Color(0xFF1A5C38);
 const Color _kGold = Color(0xFFC5A028);
 
+bool _isValidMushafPage(int page) => page >= 1 && page <= pageData.length;
+
+int _safeMushafPage(int page) => _isValidMushafPage(page) ? page : 1;
+
 /// رقم الجزء لأول آية في الصفحة، محسوب من بيانات الباكيدج نفسها (pageData + getJuzNumber)
 int _juzForPage(int page) {
-  final firstEntry = (pageData[page - 1] as List).first as Map;
-  return getJuzNumber(firstEntry['surah'] as int, firstEntry['start'] as int);
+  if (!_isValidMushafPage(page)) return 1;
+
+  final entries = pageData[page - 1];
+  if (entries is! List || entries.isEmpty) return 1;
+
+  final firstEntry = entries.first;
+  if (firstEntry is! Map) return 1;
+
+  final surah = firstEntry['surah'];
+  final start = firstEntry['start'];
+  if (surah is! int || start is! int) return 1;
+
+  return getJuzNumber(surah, start);
 }
 
 class MadaniMushafPageView extends StatefulWidget {
@@ -52,7 +67,7 @@ class _MadaniMushafPageViewState extends State<MadaniMushafPageView>
         ? null // هيتحدد في _restoreIfNeeded بعد الفريم الأول
         : getPageNumber(widget.surahNumber, widget.highlightAyahNumber ?? 1);
 
-    _currentPage = startPage ?? 1;
+    _currentPage = _safeMushafPage(startPage ?? 1);
     _controller = PageController(initialPage: (_currentPage - 1));
 
     if (widget.highlightAyahNumber != null) {
@@ -75,7 +90,11 @@ class _MadaniMushafPageViewState extends State<MadaniMushafPageView>
   Future<void> _restoreIfNeeded() async {
     if (!widget.restoreLastPosition) return;
     final lastPos = await LastPositionService.getLastPosition();
-    if (lastPos != null && mounted && _controller.hasClients) {
+    if (lastPos != null &&
+        mounted &&
+        _controller.hasClients &&
+        lastPos.pageIndex >= 0 &&
+        lastPos.pageIndex < pageData.length) {
       // pageIndex بقى بيخزّن رقم صفحة المصحف المطلق (0-indexed) دلوقتي.
       _controller.jumpToPage(lastPos.pageIndex);
       setState(() => _currentPage = lastPos.pageIndex + 1);
@@ -87,7 +106,10 @@ class _MadaniMushafPageViewState extends State<MadaniMushafPageView>
     WidgetsBinding.instance.removeObserver(this);
     DailyReadingService.shared.stopReading();
     LastPositionService.saveLastPosition(
-      LastRead(surahNumber: widget.surahNumber, pageIndex: _currentPage - 1),
+      LastRead(
+        surahNumber: widget.surahNumber,
+        pageIndex: _safeMushafPage(_currentPage) - 1,
+      ),
     );
     widget.onPositionSaved?.call();
     _controller.dispose();
@@ -147,7 +169,11 @@ class _MadaniMushafPageViewState extends State<MadaniMushafPageView>
               isTajweed: true,
               highlights: _highlights,
               onLongPress: _onAyahLongPress,
-              onPageChanged: (page) => setState(() => _currentPage = page),
+              onPageChanged: (page) {
+                if (_isValidMushafPage(page)) {
+                  setState(() => _currentPage = page);
+                }
+              },
               topBar: _buildPageInfoBar(isDark),
             ),
           ),
@@ -157,8 +183,9 @@ class _MadaniMushafPageViewState extends State<MadaniMushafPageView>
   }
 
   Widget _buildPageInfoBar(bool isDark) {
-    final juz = _juzForPage(_currentPage);
-    final hizbText = getCurrentHizbTextForPage(_currentPage);
+    final currentPage = _safeMushafPage(_currentPage);
+    final juz = _juzForPage(currentPage);
+    final hizbText = getCurrentHizbTextForPage(currentPage);
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
@@ -212,7 +239,7 @@ class _MadaniMushafPageViewState extends State<MadaniMushafPageView>
           ],
           const Spacer(),
           Text(
-            'صفحة $_currentPage',
+            'صفحة $currentPage',
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,
