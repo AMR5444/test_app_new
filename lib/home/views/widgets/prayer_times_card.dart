@@ -4,24 +4,33 @@ import 'package:test_app_new/core/theme/app_theme.dart';
 
 class PrayerTimesCard extends StatelessWidget {
   final bool isDark;
+  final Map<String, String> prayerTimes;
+  final String nextPrayer;
+  final String nextPrayerTime;
+  final String countdown;
+  final String location;
+  final bool isLoading;
+  final String? errorMessage;
 
-  const PrayerTimesCard({super.key, required this.isDark});
-
-  static const Map<String, String> _prayerTimes = {
-    'الفجر': '٤:٤٣',
-    'الشروق': '٦:٠٥',
-    'الظهر': '١٢:٣٤',
-    'العصر': '٣:٥٨',
-    'المغرب': '٦:٤٢',
-    'العشاء': '',
-  };
-
-  static const String _nextPrayer = 'الظهر';
-  static const String _nextPrayerTime = '١٢:٣٤ م';
+  const PrayerTimesCard({
+    super.key,
+    required this.isDark,
+    required this.prayerTimes,
+    required this.nextPrayer,
+    required this.nextPrayerTime,
+    required this.countdown,
+    required this.location,
+    required this.isLoading,
+    required this.errorMessage,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final prayers = ['الفجر', 'الشروق', 'الظهر', 'العصر', 'المغرب'];
+    const prayers = ['الفجر', 'الشروق', 'الظهر', 'العصر', 'المغرب', 'العشاء'];
+    final status = errorMessage ??
+        (isLoading
+            ? 'جارٍ تحديد الموقع...'
+            : 'متبقي ${countdown.isEmpty ? '--:--:--' : countdown}');
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -44,14 +53,14 @@ class PrayerTimesCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'القاهرة',
+                      location.isEmpty ? 'مواقيت الصلاة' : location,
                       style: GoogleFonts.cairo(
                         fontSize: 13,
                         color: Colors.white70,
                       ),
                     ),
                     Text(
-                      'متبقي ٢:١٥:١٧',
+                      status,
                       style: GoogleFonts.cairo(
                         fontSize: 12,
                         color: Colors.white60,
@@ -63,14 +72,14 @@ class PrayerTimesCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      'الصلاة القادمة • $_nextPrayer',
+                      'الصلاة القادمة • ${nextPrayer.isEmpty ? '--' : nextPrayer}',
                       style: GoogleFonts.cairo(
                         fontSize: 12,
                         color: Colors.white70,
                       ),
                     ),
                     Text(
-                      _nextPrayerTime,
+                      nextPrayerTime.isEmpty ? '--:--' : nextPrayerTime,
                       style: GoogleFonts.cairo(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
@@ -85,13 +94,13 @@ class PrayerTimesCard extends StatelessWidget {
             const SizedBox(height: 16),
             Row(
               children: prayers.map((name) {
-                final isNext = name == _nextPrayer;
+                final isNext = name == nextPrayer;
                 return Expanded(
                   child: Column(
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 6,
+                          horizontal: 4,
                           vertical: 4,
                         ),
                         decoration: isNext
@@ -105,7 +114,7 @@ class PrayerTimesCard extends StatelessWidget {
                             Text(
                               name,
                               style: GoogleFonts.cairo(
-                                fontSize: 11,
+                                fontSize: 10,
                                 color: isNext
                                     ? AppColors.primary
                                     : Colors.white70,
@@ -115,9 +124,9 @@ class PrayerTimesCard extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              _prayerTimes[name] ?? '',
+                              prayerTimes[name] ?? '--:--',
                               style: GoogleFonts.cairo(
-                                fontSize: 10,
+                                fontSize: 9,
                                 color: isNext
                                     ? AppColors.primary
                                     : Colors.white60,

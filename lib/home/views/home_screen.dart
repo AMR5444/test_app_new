@@ -30,7 +30,18 @@ class HomeScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     HomeHeader(isDark: isDark),
-                    PrayerTimesCard(isDark: isDark),
+                    BlocBuilder<HomeCubit, HomeState>(
+                      builder: (context, state) => PrayerTimesCard(
+                        isDark: isDark,
+                        prayerTimes: state.prayerTimes,
+                        nextPrayer: state.nextPrayer,
+                        nextPrayerTime: state.nextPrayerTime,
+                        countdown: state.prayerCountdown,
+                        location: state.prayerLocation,
+                        isLoading: state.isPrayerTimesLoading,
+                        errorMessage: state.prayerTimesError,
+                      ),
+                    ),
                     DailyAyahCard(isDark: isDark),
                     QuickAccessGrid(isDark: isDark, onNavigate: onNavigate),
                     BlocBuilder<HomeCubit, HomeState>(
@@ -43,7 +54,25 @@ class HomeScreen extends StatelessWidget {
                         );
                       },
                     ),
-                    DailyStatsSection(isDark: isDark),
+                    BlocSelector<
+                      HomeCubit,
+                      HomeState,
+                      ({int readingMinutes, int azkarCompleted, int azkarTotal})
+                    >(
+                      selector: (state) => (
+                        readingMinutes: state.todayReadingMinutes,
+                        azkarCompleted: state.todayAzkarCompleted,
+                        azkarTotal: state.todayAzkarTotal,
+                      ),
+                      builder: (context, dailyStats) {
+                        return DailyStatsSection(
+                          isDark: isDark,
+                          readingMinutes: dailyStats.readingMinutes,
+                          azkarCompleted: dailyStats.azkarCompleted,
+                          azkarTotal: dailyStats.azkarTotal,
+                        );
+                      },
+                    ),
                     const SizedBox(height: 16),
                   ],
                 ),

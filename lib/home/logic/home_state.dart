@@ -9,6 +9,16 @@ class HomeState extends Equatable {
   final String currentTime;
   final String dateHeader;
   final String hijriDate;
+  final Map<String, String> prayerTimes;
+  final String nextPrayer;
+  final String nextPrayerTime;
+  final String prayerCountdown;
+  final String prayerLocation;
+  final bool isPrayerTimesLoading;
+  final String? prayerTimesError;
+  final int todayReadingMinutes;
+  final int todayAzkarCompleted;
+  final int todayAzkarTotal;
 
   const HomeState({
     this.lastPosition,
@@ -17,6 +27,16 @@ class HomeState extends Equatable {
     this.currentTime = '',
     this.dateHeader = '',
     this.hijriDate = '',
+    this.prayerTimes = const {},
+    this.nextPrayer = '',
+    this.nextPrayerTime = '',
+    this.prayerCountdown = '',
+    this.prayerLocation = '',
+    this.isPrayerTimesLoading = false,
+    this.prayerTimesError,
+    this.todayReadingMinutes = 0,
+    this.todayAzkarCompleted = 0,
+    this.todayAzkarTotal = 0,
   });
 
   HomeState copyWith({
@@ -26,6 +46,17 @@ class HomeState extends Equatable {
     String? currentTime,
     String? dateHeader,
     String? hijriDate,
+    Map<String, String>? prayerTimes,
+    String? nextPrayer,
+    String? nextPrayerTime,
+    String? prayerCountdown,
+    String? prayerLocation,
+    bool? isPrayerTimesLoading,
+    String? prayerTimesError,
+    bool clearPrayerTimesError = false,
+    int? todayReadingMinutes,
+    int? todayAzkarCompleted,
+    int? todayAzkarTotal,
   }) {
     return HomeState(
       lastPosition: lastPosition ?? this.lastPosition,
@@ -34,6 +65,18 @@ class HomeState extends Equatable {
       currentTime: currentTime ?? this.currentTime,
       dateHeader: dateHeader ?? this.dateHeader,
       hijriDate: hijriDate ?? this.hijriDate,
+      prayerTimes: prayerTimes ?? this.prayerTimes,
+      nextPrayer: nextPrayer ?? this.nextPrayer,
+      nextPrayerTime: nextPrayerTime ?? this.nextPrayerTime,
+      prayerCountdown: prayerCountdown ?? this.prayerCountdown,
+      prayerLocation: prayerLocation ?? this.prayerLocation,
+      isPrayerTimesLoading: isPrayerTimesLoading ?? this.isPrayerTimesLoading,
+      prayerTimesError: clearPrayerTimesError
+          ? null
+          : prayerTimesError ?? this.prayerTimesError,
+      todayReadingMinutes: todayReadingMinutes ?? this.todayReadingMinutes,
+      todayAzkarCompleted: todayAzkarCompleted ?? this.todayAzkarCompleted,
+      todayAzkarTotal: todayAzkarTotal ?? this.todayAzkarTotal,
     );
   }
 
@@ -45,5 +88,15 @@ class HomeState extends Equatable {
     currentTime,
     dateHeader,
     hijriDate,
+    prayerTimes,
+    nextPrayer,
+    nextPrayerTime,
+    prayerCountdown,
+    prayerLocation,
+    isPrayerTimesLoading,
+    prayerTimesError,
+    todayReadingMinutes,
+    todayAzkarCompleted,
+    todayAzkarTotal,
   ];
 }

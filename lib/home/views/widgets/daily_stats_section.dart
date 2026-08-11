@@ -5,12 +5,18 @@ import 'stat_card.dart';
 
 class DailyStatsSection extends StatelessWidget {
   final bool isDark;
+  final int readingMinutes;
+  final int azkarCompleted;
+  final int azkarTotal;
 
-  const DailyStatsSection({super.key, required this.isDark});
+  const DailyStatsSection({
+    super.key,
+    required this.isDark,
+    required this.readingMinutes,
+    required this.azkarCompleted,
+    required this.azkarTotal,
+  });
 
-  static const int _azkarDone = 3;
-  static const int _azkarTotal = 4;
-  static const int _readingMinutes = 15;
   static const int _readingTarget = 20;
 
   @override
@@ -35,9 +41,11 @@ class DailyStatsSection extends StatelessWidget {
                 child: StatCard(
                   isDark: isDark,
                   label: 'القراءة',
-                  value: '$_readingMinutes د',
+                  value: '$readingMinutes د',
                   subtitle: 'هدف $_readingTarget د',
-                  progress: _readingMinutes / _readingTarget,
+                  progress: (readingMinutes / _readingTarget)
+                      .clamp(0.0, 1.0)
+                      .toDouble(),
                 ),
               ),
               const SizedBox(width: 12),
@@ -45,9 +53,9 @@ class DailyStatsSection extends StatelessWidget {
                 child: StatCard(
                   isDark: isDark,
                   label: 'الأذكار',
-                  value: '${(_azkarDone / _azkarTotal * 100).round()}٪',
-                  subtitle: '$_azkarDone من $_azkarTotal',
-                  progress: _azkarDone / _azkarTotal,
+                  value: '${(_azkarProgress * 100).round()}٪',
+                  subtitle: '$azkarCompleted من $azkarTotal',
+                  progress: _azkarProgress,
                 ),
               ),
             ],
@@ -56,4 +64,9 @@ class DailyStatsSection extends StatelessWidget {
       ),
     );
   }
+
+  double get _azkarProgress =>
+      azkarTotal <= 0
+          ? 0
+          : (azkarCompleted / azkarTotal).clamp(0.0, 1.0).toDouble();
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:qcf_quran_plus/qcf_quran_plus.dart';
+import 'package:test_app_new/Quran_Section/data/daily_reading_service.dart';
 import 'package:test_app_new/Quran_Section/data/LastPositionService.dart';
 import 'package:test_app_new/Quran_Section/madani_mushaf/global_ayah_utils.dart';
 import 'package:test_app_new/Quran_Section/models/LastRead_model.dart';
@@ -35,7 +36,8 @@ class MadaniMushafPageView extends StatefulWidget {
   State<MadaniMushafPageView> createState() => _MadaniMushafPageViewState();
 }
 
-class _MadaniMushafPageViewState extends State<MadaniMushafPageView> {
+class _MadaniMushafPageViewState extends State<MadaniMushafPageView>
+    with WidgetsBindingObserver {
   late final PageController _controller;
   int _currentPage = 1; // رقم صفحة المصحف الفعلي (1-604)
   List<HighlightVerse> _highlights = [];
@@ -43,6 +45,8 @@ class _MadaniMushafPageViewState extends State<MadaniMushafPageView> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    DailyReadingService.shared.startReading();
 
     final startPage = widget.restoreLastPosition
         ? null // هيتحدد في _restoreIfNeeded بعد الفريم الأول
@@ -80,12 +84,25 @@ class _MadaniMushafPageViewState extends State<MadaniMushafPageView> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    DailyReadingService.shared.stopReading();
     LastPositionService.saveLastPosition(
       LastRead(surahNumber: widget.surahNumber, pageIndex: _currentPage - 1),
     );
     widget.onPositionSaved?.call();
     _controller.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      DailyReadingService.shared.startReading();
+    } else if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached) {
+      DailyReadingService.shared.stopReading();
+    }
   }
 
   void _onAyahLongPress(
