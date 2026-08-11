@@ -11,6 +11,9 @@ class PrayerTimesService {
   PrayerTimes? _prayerTimes;
   DateTime? _prayerTimesDate;
 
+  Map<String, String>? _cachedTimesMap;
+  DateTime? _cachedTimesMapDate;
+
   Future<PrayerTimesData> load() async {
     if (!await Geolocator.isLocationServiceEnabled()) {
       throw const PrayerTimesException('خدمة الموقع غير مفعلة');
@@ -37,6 +40,9 @@ class PrayerTimesService {
       coordinates: Coordinates(position.latitude, position.longitude),
       calculationParameters: CalculationMethodParameters.egyptian(),
     );
+    // New prayer data was loaded, so any cached formatted times are stale.
+    _cachedTimesMap = null;
+    _cachedTimesMapDate = null;
 
     return _buildData(now);
   }
@@ -53,22 +59,33 @@ class PrayerTimesService {
   }
 
   PrayerTimesData _buildData(tz.TZDateTime now) {
-    final times = _prayerTimes!;
+    final today = DateTime(now.year, now.month, now.day);
+    // The formatted prayer-time strings only change once a day, so they're
+    // cached instead of being reformatted on every per-second refresh.
+    if (_cachedTimesMap == null || _cachedTimesMapDate != today) {
+      _cachedTimesMapDate = today;
+      _cachedTimesMap = _buildTimesMap();
+    }
     final nextPrayer = _nextPrayer(now);
     return PrayerTimesData(
-      times: {
-        'الفجر': _formatTime(times.fajr),
-        'الشروق': _formatTime(times.sunrise),
-        'الظهر': _formatTime(times.dhuhr),
-        'العصر': _formatTime(times.asr),
-        'المغرب': _formatTime(times.maghrib),
-        'العشاء': _formatTime(times.isha),
-      },
+      times: _cachedTimesMap!,
       nextPrayer: nextPrayer.name,
       nextPrayerTime: _formatTime(nextPrayer.time),
       countdown: _formatCountdown(nextPrayer.time.difference(now)),
       location: 'موقعك الحالي',
     );
+  }
+
+  Map<String, String> _buildTimesMap() {
+    final times = _prayerTimes!;
+    return {
+      'الفجر': _formatTime(times.fajr),
+      'الشروق': _formatTime(times.sunrise),
+      'الظهر': _formatTime(times.dhuhr),
+      'العصر': _formatTime(times.asr),
+      'المغرب': _formatTime(times.maghrib),
+      'العشاء': _formatTime(times.isha),
+    };
   }
 
   _NextPrayer _nextPrayer(tz.TZDateTime now) {
@@ -83,17 +100,13 @@ class PrayerTimesService {
     ];
     return prayers.firstWhere(
       (prayer) => prayer.time.isAfter(now),
-      orElse: () => _NextPrayer(
-        'الفجر',
-        tz.TZDateTime.from(times.fajrAfter, timezone),
-      ),
+      orElse: () =>
+          _NextPrayer('الفجر', tz.TZDateTime.from(times.fajrAfter, timezone)),
     );
   }
 
-  String _formatTime(DateTime time) => DateFormat(
-        'h:mm a',
-        'ar',
-      ).format(tz.TZDateTime.from(time, _timezone!));
+  String _formatTime(DateTime time) =>
+      DateFormat('h:mm a', 'ar').format(tz.TZDateTime.from(time, _timezone!));
 
   String _formatCountdown(Duration duration) {
     final hours = duration.inHours.toString().padLeft(2, '0');

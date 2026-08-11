@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:test_app_new/core/theme/app_theme.dart';
+import 'package:test_app_new/home/logic/home_cubit.dart';
+import 'package:test_app_new/home/logic/home_state.dart';
 
 class PrayerTimesCard extends StatelessWidget {
   final bool isDark;
   final Map prayerTimes;
   final String nextPrayer;
   final String nextPrayerTime;
-  final String countdown;
   final String location;
   final bool isLoading;
   final String? errorMessage;
@@ -18,7 +20,6 @@ class PrayerTimesCard extends StatelessWidget {
     required this.prayerTimes,
     required this.nextPrayer,
     required this.nextPrayerTime,
-    required this.countdown,
     required this.location,
     required this.isLoading,
     required this.errorMessage,
@@ -58,15 +59,9 @@ class PrayerTimesCard extends StatelessWidget {
                         color: Colors.white70,
                       ),
                     ),
-                    Text(
-                      errorMessage ??
-                          (showLoading
-                              ? 'جارٍ تحميل مواقيت الصلاة...'
-                              : 'متبقي ${countdown.isEmpty ? '' : countdown}'),
-                      style: GoogleFonts.cairo(
-                        fontSize: 12,
-                        color: Colors.white60,
-                      ),
+                    _StatusText(
+                      showLoading: showLoading,
+                      errorMessage: errorMessage,
                     ),
                   ],
                 ),
@@ -157,6 +152,37 @@ class PrayerTimesCard extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Shows the loading/error message, or the live countdown to the next
+/// prayer. Isolated in its own widget with its own [BlocSelector] so the
+/// per-second countdown tick only rebuilds this small Text, not the whole
+/// [PrayerTimesCard].
+class _StatusText extends StatelessWidget {
+  final bool showLoading;
+  final String? errorMessage;
+
+  const _StatusText({required this.showLoading, required this.errorMessage});
+
+  @override
+  Widget build(BuildContext context) {
+    if (errorMessage != null || showLoading) {
+      return Text(
+        errorMessage ?? 'جارٍ تحميل مواقيت الصلاة...',
+        style: GoogleFonts.cairo(fontSize: 12, color: Colors.white60),
+      );
+    }
+
+    return BlocSelector<HomeCubit, HomeState, String>(
+      selector: (state) => state.prayerCountdown,
+      builder: (context, countdown) {
+        return Text(
+          'متبقي ${countdown.isEmpty ? '' : countdown}',
+          style: GoogleFonts.cairo(fontSize: 12, color: Colors.white60),
+        );
+      },
     );
   }
 }

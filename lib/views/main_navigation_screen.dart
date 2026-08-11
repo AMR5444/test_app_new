@@ -30,7 +30,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         final isDark = settings.isDarkMode;
 
         final List<Widget> screens = [
-          HomeScreen(onNavigate: _navigateTo),
+          HomeScreen(onNavigate: _navigateTo, isVisible: _currentIndex == 0),
           const QuranIndexScreen(),
           const AzkarCategoriesScreen(),
           const QiblaScreen(),

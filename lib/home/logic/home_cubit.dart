@@ -33,9 +33,12 @@ class HomeCubit extends Cubit<HomeState> {
   Timer? _timer;
   StreamSubscription? _azkarStatsSubscription;
   DateTime? _lastReadingStatsRefresh;
+  bool _initialized = false;
+  bool _timerAllowed = true;
 
   Future<void> _init() async {
     await _dateTimeService.initialize();
+    _initialized = true;
     _updateHomeData();
     _loadLastPosition();
     _loadPrayerTimes();
@@ -44,31 +47,65 @@ class HomeCubit extends Cubit<HomeState> {
       (_) => _loadTodayAzkarStats(),
     );
     _loadTodayAzkarStats();
+    _startTimerIfAllowed();
+  }
+
+  void _startTimerIfAllowed() {
+    if (!_timerAllowed || _timer != null || isClosed) return;
     _timer = Timer.periodic(
       const Duration(seconds: 1),
       (_) => _updateHomeData(),
     );
   }
 
+  /// Stops the per-second refresh (e.g. Home tab not visible / app backgrounded).
+  void pauseTimer() {
+    _timerAllowed = false;
+    _timer?.cancel();
+    _timer = null;
+  }
+
+  /// Resumes the per-second refresh and immediately refreshes stale data.
+  void resumeTimer() {
+    _timerAllowed = true;
+    if (!_initialized || _timer != null || isClosed) return;
+    _updateHomeData();
+    _startTimerIfAllowed();
+  }
+
   void _updateHomeData() {
     final now = DateTime.now();
     final dateTime = _dateTimeService.format(now);
-    emit(
-      state.copyWith(
-        currentTime: dateTime.currentTime,
-        dateHeader: dateTime.dateHeader,
-        hijriDate: dateTime.hijriDate,
-      ),
-    );
     _refreshTodayReadingMinutes(now);
+
     final prayerData = _prayerTimesService.current();
     if (prayerData == null) {
+      emit(
+        state.copyWith(
+          currentTime: dateTime.currentTime,
+          dateHeader: dateTime.dateHeader,
+          hijriDate: dateTime.hijriDate,
+        ),
+      );
       if (state.prayerTimes.isNotEmpty && !state.isPrayerTimesLoading) {
         _loadPrayerTimes();
       }
       return;
     }
-    _emitPrayerTimes(prayerData);
+
+    emit(
+      state.copyWith(
+        currentTime: dateTime.currentTime,
+        dateHeader: dateTime.dateHeader,
+        hijriDate: dateTime.hijriDate,
+        prayerTimes: prayerData.times,
+        nextPrayer: prayerData.nextPrayer,
+        nextPrayerTime: prayerData.nextPrayerTime,
+        prayerCountdown: prayerData.countdown,
+        prayerLocation: prayerData.location,
+        clearPrayerTimesError: true,
+      ),
+    );
   }
 
   void _refreshTodayReadingMinutes(DateTime now) {

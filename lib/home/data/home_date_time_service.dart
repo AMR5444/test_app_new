@@ -6,6 +6,10 @@ class HomeDateTimeService {
   late final DateFormat _timeFormat;
   late final DateFormat _gregorianFormat;
 
+  DateTime? _cachedDay;
+  String _cachedDateHeader = '';
+  String _cachedHijriDate = '';
+
   static const List<String> _hijriMonths = [
     'محرم',
     'صفر',
@@ -28,10 +32,16 @@ class HomeDateTimeService {
   }
 
   HomeDateTimeData format(DateTime dateTime) {
+    final day = DateTime(dateTime.year, dateTime.month, dateTime.day);
+    if (_cachedDay != day) {
+      _cachedDay = day;
+      _cachedDateHeader = _toArabicNumbers(_gregorianFormat.format(dateTime));
+      _cachedHijriDate = _formatHijri(dateTime);
+    }
     return HomeDateTimeData(
       currentTime: _timeFormat.format(dateTime),
-      dateHeader: _toArabicNumbers(_gregorianFormat.format(dateTime)),
-      hijriDate: _formatHijri(dateTime),
+      dateHeader: _cachedDateHeader,
+      hijriDate: _cachedHijriDate,
     );
   }
 

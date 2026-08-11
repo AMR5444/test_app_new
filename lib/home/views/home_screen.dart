@@ -11,15 +11,76 @@ import 'widgets/home_header.dart';
 import 'widgets/prayer_times_card.dart';
 import 'widgets/quick_access_grid.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   final Function(int) onNavigate;
 
-  const HomeScreen({super.key, required this.onNavigate});
+  /// Whether the Home tab is currently the visible one (e.g. in an
+  /// [IndexedStack]-based navigation, where offscreen tabs stay mounted).
+  /// Used to pause the per-second refresh timer when Home isn't shown.
+  final bool isVisible;
+
+  const HomeScreen({
+    super.key,
+    required this.onNavigate,
+    this.isVisible = true,
+  });
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
+  late final HomeCubit _cubit;
+
+  @override
+  void initState() {
+    super.initState();
+    _cubit = HomeCubit();
+    WidgetsBinding.instance.addObserver(this);
+    if (!_shouldRunTimer) {
+      _cubit.pauseTimer();
+    }
+  }
+
+  bool get _shouldRunTimer {
+    final lifecycle = WidgetsBinding.instance.lifecycleState;
+    final appActive =
+        lifecycle == null || lifecycle == AppLifecycleState.resumed;
+    return widget.isVisible && appActive;
+  }
+
+  void _syncTimer() {
+    if (_shouldRunTimer) {
+      _cubit.resumeTimer();
+    } else {
+      _cubit.pauseTimer();
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant HomeScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isVisible != oldWidget.isVisible) {
+      _syncTimer();
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    _syncTimer();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _cubit.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => HomeCubit(),
+    return BlocProvider.value(
+      value: _cubit,
       child: BlocSelector<SettingsCubit, SettingsState, bool>(
         selector: (state) => state.isDarkMode,
         builder: (context, isDark) {
@@ -35,7 +96,6 @@ class HomeScreen extends StatelessWidget {
                           previous.prayerTimes != current.prayerTimes ||
                           previous.nextPrayer != current.nextPrayer ||
                           previous.nextPrayerTime != current.nextPrayerTime ||
-                          previous.prayerCountdown != current.prayerCountdown ||
                           previous.prayerLocation != current.prayerLocation ||
                           previous.isPrayerTimesLoading !=
                               current.isPrayerTimesLoading ||
@@ -45,7 +105,6 @@ class HomeScreen extends StatelessWidget {
                         prayerTimes: state.prayerTimes,
                         nextPrayer: state.nextPrayer,
                         nextPrayerTime: state.nextPrayerTime,
-                        countdown: state.prayerCountdown,
                         location: state.prayerLocation,
                         isLoading: state.isPrayerTimesLoading,
                         errorMessage: state.prayerTimesError,
@@ -61,7 +120,10 @@ class HomeScreen extends StatelessWidget {
                         ayahSource: state.dailyAyahSource,
                       ),
                     ),
-                    QuickAccessGrid(isDark: isDark, onNavigate: onNavigate),
+                    QuickAccessGrid(
+                      isDark: isDark,
+                      onNavigate: widget.onNavigate,
+                    ),
                     BlocBuilder<HomeCubit, HomeState>(
                       buildWhen: (previous, current) =>
                           previous.lastPosition != current.lastPosition ||
@@ -71,7 +133,7 @@ class HomeScreen extends StatelessWidget {
                           isDark: isDark,
                           lastPosition: state.lastPosition,
                           lastSurah: state.lastSurah,
-                          onTap: () => onNavigate(1),
+                          onTap: () => widget.onNavigate(1),
                         );
                       },
                     ),
