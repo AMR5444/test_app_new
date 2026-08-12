@@ -73,10 +73,13 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
-  # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - lib/assets/audio/adhan_mishary.mp3
+    - lib/assets/audio/adhan_mansour_al_zahrani.mp3
+    - lib/assets/audio/adhan_ahmad_al_nafees.mp3
+    - lib/assets/audio/adhan_mustafa_ozcan.mp3
+    - lib/assets/audio/iqama_ali_al_mulla.mp3
+    - lib/assets/audio/iqama_al_hosary.mp3
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
   # For details regarding adding assets from package dependencies, see

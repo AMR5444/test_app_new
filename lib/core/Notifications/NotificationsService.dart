@@ -92,7 +92,7 @@ class NotificationsService {
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       matchDateTimeComponents: DateTimeComponents.time,
     );
-    print('✅ تم جدولة إشعار: $title في ${scheduledDate.toString()}');
+    print(' تم جدولة إشعار: $title في ${scheduledDate.toString()}');
   }
 
   static Future<void> schedulePrayerNotification({
@@ -102,10 +102,12 @@ class NotificationsService {
     required TZDateTime scheduledDate,
     required String channelId,
     required String channelName,
-    String? soundResource,
+    String? assetPath,
     bool playSound = false,
   }) async {
-    final hasCustomSound = soundResource != null;
+    final androidSound = _resolveAndroidSound(assetPath);
+    final hasCustomSound = androidSound != null;
+
     await notificationsPlugin.zonedSchedule(
       id: id,
       title: title,
@@ -118,21 +120,41 @@ class NotificationsService {
           channelDescription: 'Prayer time notifications',
           importance: Importance.max,
           priority: Priority.high,
-          playSound: playSound,
-          sound: hasCustomSound
-              ? RawResourceAndroidNotificationSound(soundResource)
-              : null,
+          playSound: playSound || hasCustomSound,
+          sound: androidSound,
           enableVibration: true,
         ),
         iOS: DarwinNotificationDetails(
           presentAlert: true,
           presentBadge: true,
-          presentSound: playSound,
-          sound: hasCustomSound ? '$soundResource.aiff' : null,
+          presentSound: playSound || hasCustomSound,
         ),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
     );
+  }
+
+  static AndroidNotificationSound? _resolveAndroidSound(String? assetPath) {
+    final resourceName = _resolveAndroidSoundResourceName(assetPath);
+    if (resourceName == null) return null;
+    try {
+      return RawResourceAndroidNotificationSound(resourceName);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  static String? _resolveAndroidSoundResourceName(String? assetPath) {
+    if (assetPath == null || assetPath.isEmpty) return null;
+    final fileName = assetPath.split('/').last;
+    final withoutExtension = fileName.contains('.')
+        ? fileName.substring(0, fileName.lastIndexOf('.'))
+        : fileName;
+    final resourceName = withoutExtension.toLowerCase().replaceAll(
+      RegExp(r'[^a-z0-9_]'),
+      '_',
+    );
+    return resourceName.isEmpty ? null : resourceName;
   }
 
   static Future<void> cancel(int id) => notificationsPlugin.cancel(id: id);

@@ -1,5 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test_app_new/core/Notifications/NotificationsService.dart';
+import 'package:test_app_new/home/data/prayer_audio_voice_catalog.dart';
 import 'package:test_app_new/home/models/prayer_schedule.dart';
 import 'package:timezone/timezone.dart' as tz;
 
@@ -12,10 +13,6 @@ class PrayerAudioService {
   static const int _adhanIdOffset = 10000;
   static const int _iqamaIdOffset = 20000;
   static const int _reminderIdOffset = 30000;
-
-  static const bool _hasBundledAudioAssets = false;
-  static const String _adhanSoundResource = 'adhan';
-  static const String _iqamaSoundResource = 'iqama';
 
   List<PrayerSchedule> _cachedSchedules = const [];
 
@@ -37,6 +34,12 @@ class PrayerAudioService {
     final iqamaEnabled = preferences.getBool('iqamaEnabled') ?? true;
     final reminderEnabled = preferences.getBool('prayerNotifications') ?? true;
     final reminderMinutes = preferences.getInt('prayerReminderMinutes') ?? 15;
+    final adhanVoice = PrayerAudioVoiceCatalog.resolveAdhanVoice(
+      preferences.getString('selectedAdhanVoiceId'),
+    );
+    final iqamaVoice = PrayerAudioVoiceCatalog.resolveIqamaVoice(
+      preferences.getString('selectedIqamaVoiceId'),
+    );
     final now = tz.TZDateTime.now(
       _cachedSchedules.first.times.values.first.location,
     );
@@ -54,9 +57,9 @@ class PrayerAudioService {
             title: 'حان وقت صلاة ${prayer.label}',
             body: 'حان الآن موعد الأذان.',
             scheduledDate: prayerTime,
-            channelId: 'prayer_adhan_channel',
+            channelId: 'prayer_adhan_${adhanVoice.id}',
             channelName: 'Adhan',
-            soundResource: _hasBundledAudioAssets ? _adhanSoundResource : null,
+            assetPath: adhanVoice.assetPath,
           );
         }
 
@@ -68,9 +71,9 @@ class PrayerAudioService {
             title: 'حان وقت الإقامة لصلاة ${prayer.label}',
             body: 'حان الآن موعد الإقامة.',
             scheduledDate: iqamaTime,
-            channelId: 'prayer_iqama_channel',
+            channelId: 'prayer_iqama_${iqamaVoice.id}',
             channelName: 'Iqama',
-            soundResource: _hasBundledAudioAssets ? _iqamaSoundResource : null,
+            assetPath: iqamaVoice.assetPath,
           );
         }
 
