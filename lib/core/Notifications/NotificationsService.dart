@@ -13,31 +13,54 @@ class NotificationsService {
   static final FlutterLocalNotificationsPlugin notificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
+  /// Action id for the "stop adhan" notification action button.
+  ///
+  /// Shared between Android's [AndroidNotificationAction] and iOS/macOS's
+  /// [DarwinNotificationAction] so both platforms are handled by the same
+  /// response-handling code below.
+  static const String stopAdhanActionId = 'stop_adhan';
+
+  /// iOS/macOS notification category that carries the stop-adhan action.
+  /// Must be registered up front via [DarwinInitializationSettings] and
+  /// then referenced per-notification via `categoryIdentifier`.
+  static const String _adhanCategoryId = 'adhan_category';
+
   static Future<void> init() async {
     initializeTimeZones();
 
     const androidSettings = AndroidInitializationSettings(
       '@mipmap/ic_launcher',
     );
-    const iosSettings = DarwinInitializationSettings(
+    final iosSettings = DarwinInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
       requestSoundPermission: true,
+      notificationCategories: <DarwinNotificationCategory>[
+        DarwinNotificationCategory(
+          _adhanCategoryId,
+          actions: <DarwinNotificationAction>[
+            DarwinNotificationAction.plain(
+              stopAdhanActionId,
+              'إيقاف الأذان',
+              options: <DarwinNotificationActionOption>{
+                DarwinNotificationActionOption.destructive,
+              },
+            ),
+          ],
+        ),
+      ],
     );
 
-    const settings = InitializationSettings(
+    final settings = InitializationSettings(
       android: androidSettings,
       iOS: iosSettings,
     );
 
     await notificationsPlugin.initialize(
       settings: settings,
-      onDidReceiveNotificationResponse: (response) {
-        final payload = response.payload;
-        if (payload != null) {
-          handleNotificationClick(payload);
-        }
-      },
+      onDidReceiveNotificationResponse: _onNotificationResponse,
+      onDidReceiveBackgroundNotificationResponse:
+          _onBackgroundNotificationResponse,
     );
     await notificationsPlugin
         .resolvePlatformSpecificImplementation<
@@ -57,6 +80,30 @@ class NotificationsService {
       '/azkar',
       arguments: category, // أذكار الصباح أو المساء
     );
+  }
+
+  /// Foreground/main-isolate notification response handler.
+  static void _onNotificationResponse(NotificationResponse response) {
+    if (_handleStopAdhanAction(response)) return;
+
+    final payload = response.payload;
+    if (payload != null) {
+      handleNotificationClick(payload);
+    }
+  }
+
+  @pragma('vm:entry-point')
+  static void _onBackgroundNotificationResponse(NotificationResponse response) {
+    _handleStopAdhanAction(response);
+  }
+
+  static bool _handleStopAdhanAction(NotificationResponse response) {
+    if (response.actionId != stopAdhanActionId) return false;
+    final id = response.id;
+    if (id != null) {
+      notificationsPlugin.cancel(id: id);
+    }
+    return true;
   }
 
   static Future<void> scheduleNotification({
@@ -104,6 +151,7 @@ class NotificationsService {
     required String channelName,
     String? assetPath,
     bool playSound = false,
+    bool addStopAction = false,
   }) async {
     final androidSound = _resolveAndroidSound(assetPath);
     final hasCustomSound = androidSound != null;
@@ -123,11 +171,22 @@ class NotificationsService {
           playSound: playSound || hasCustomSound,
           sound: androidSound,
           enableVibration: true,
+          actions: addStopAction
+              ? const <AndroidNotificationAction>[
+                  AndroidNotificationAction(
+                    stopAdhanActionId,
+                    'إيقاف الأذان',
+                    cancelNotification: true,
+                    showsUserInterface: false,
+                  ),
+                ]
+              : null,
         ),
         iOS: DarwinNotificationDetails(
           presentAlert: true,
           presentBadge: true,
           presentSound: playSound || hasCustomSound,
+          categoryIdentifier: addStopAction ? _adhanCategoryId : null,
         ),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,

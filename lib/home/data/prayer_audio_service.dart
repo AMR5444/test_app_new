@@ -60,6 +60,7 @@ class PrayerAudioService {
             channelId: 'prayer_adhan_${adhanVoice.id}',
             channelName: 'Adhan',
             assetPath: adhanVoice.assetPath,
+            addStopAction: true,
           );
         }
 
