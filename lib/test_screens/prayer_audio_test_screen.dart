@@ -180,7 +180,7 @@ class _PrayerAudioTestScreenState extends State<PrayerAudioTestScreen> {
                 border: Border.all(color: Colors.orange.withOpacity(0.3)),
               ),
               child: Text(
-                'ملاحظة: جررررب الاذان من هنا يا علي يا سيد يا بدوي .',
+                ' جررررب الاذان من هنا يا علي يا سيد يا بدوي ',
                 textAlign: TextAlign.center,
                 style: GoogleFonts.cairo(
                   fontSize: 13,
