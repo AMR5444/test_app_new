@@ -11,6 +11,9 @@ import 'package:test_app_new/core/theme/app_theme.dart';
 import 'azkr_section/data/Azkar_API.dart';
 import 'core/Notifications/azkar_scheduler.dart';
 import 'package:permission_handler/permission_handler.dart';
+// TEMPORARY: Test screen import — DELETE AFTER TESTING
+import 'test_screens/prayer_audio_test_screen.dart';
+// END TEMPORARY
 
 Future requestNotificationPermission() async {
   final status = await Permission.notification.status;
@@ -67,6 +70,9 @@ class MyApp extends StatelessWidget {
                   body: AzkarCategoriesScreen(),
                 );
               },
+              // TEMPORARY: Test screen route — DELETE AFTER TESTING
+              '/test-adhan': (context) => const PrayerAudioTestScreen(),
+              // END TEMPORARY
             },
           );
         },

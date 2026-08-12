@@ -35,16 +35,14 @@ class NotificationsService {
       requestAlertPermission: true,
       requestBadgePermission: true,
       requestSoundPermission: true,
-      notificationCategories: <DarwinNotificationCategory>[
+      notificationCategories: [
         DarwinNotificationCategory(
           _adhanCategoryId,
-          actions: <DarwinNotificationAction>[
+          actions: [
             DarwinNotificationAction.plain(
               stopAdhanActionId,
               'إيقاف الأذان',
-              options: <DarwinNotificationActionOption>{
-                DarwinNotificationActionOption.destructive,
-              },
+              options: {DarwinNotificationActionOption.destructive},
             ),
           ],
         ),
@@ -86,7 +84,16 @@ class NotificationsService {
   static void _onNotificationResponse(NotificationResponse response) {
     if (_handleStopAdhanAction(response)) return;
 
+    final id = response.id;
     final payload = response.payload;
+
+    // Prayer notifications (Adhan, Iqama, Reminder) use IDs >= 1000.
+    // Azkar notifications use IDs < 1000.
+    if (id != null && id >= 1000) {
+      navigatorKey.currentState?.popUntil((route) => route.isFirst);
+      return;
+    }
+
     if (payload != null) {
       handleNotificationClick(payload);
     }
@@ -172,7 +179,7 @@ class NotificationsService {
           sound: androidSound,
           enableVibration: true,
           actions: addStopAction
-              ? const <AndroidNotificationAction>[
+              ? const [
                   AndroidNotificationAction(
                     stopAdhanActionId,
                     'إيقاف الأذان',

@@ -11,47 +11,93 @@ class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) =>
-      BlocSelector<SettingsCubit, SettingsState, bool>(
-        selector: (state) => state.isDarkMode,
-        builder: (context, isDark) => Scaffold(
-          backgroundColor: isDark ? AppColors.bgDark : AppColors.bgLight,
-          body: SafeArea(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
-                    child: Text(
-                      'الإعدادات',
+  Widget build(
+    BuildContext context,
+  ) => BlocSelector<SettingsCubit, SettingsState, bool>(
+    selector: (state) => state.isDarkMode,
+    builder: (context, isDark) => Scaffold(
+      backgroundColor: isDark ? AppColors.bgDark : AppColors.bgLight,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
+                child: Text(
+                  'الإعدادات',
+                  style: GoogleFonts.cairo(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? AppColors.textLight : AppColors.textPrimary,
+                  ),
+                ),
+              ),
+              AppearanceSettingsSection(isDark: isDark),
+              NotificationsSettingsSection(isDark: isDark),
+              ReadingSettingsSection(isDark: isDark),
+              // TEMPORARY: Test screen access — DELETE AFTER TESTING
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: isDark ? AppColors.bgCardDark : Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.04),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: ListTile(
+                    leading: const Icon(Icons.bug_report, color: Colors.orange),
+                    title: Text(
+                      'اختبار الأذان (مؤقت)',
                       style: GoogleFonts.cairo(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
                         color: isDark
                             ? AppColors.textLight
                             : AppColors.textPrimary,
                       ),
                     ),
-                  ),
-                  AppearanceSettingsSection(isDark: isDark),
-                  NotificationsSettingsSection(isDark: isDark),
-                  ReadingSettingsSection(isDark: isDark),
-                  const SizedBox(height: 24),
-                  Center(
-                    child: Text(
-                      'نور • الإصدار ١.٠',
+                    subtitle: Text(
+                      'شاشة اختبار مؤقتة للأذان والإقامة',
                       style: GoogleFonts.cairo(
                         fontSize: 12,
-                        color: AppColors.textMuted,
+                        color: AppColors.textSecondary,
                       ),
                     ),
+                    trailing: const Icon(
+                      Icons.arrow_forward_ios,
+                      size: 16,
+                      color: AppColors.textSecondary,
+                    ),
+                    onTap: () => Navigator.pushNamed(context, '/test-adhan'),
                   ),
-                  const SizedBox(height: 32),
-                ],
+                ),
               ),
-            ),
+              // END TEMPORARY
+              const SizedBox(height: 24),
+              Center(
+                child: Text(
+                  'نور • الإصدار ١.٠',
+                  style: GoogleFonts.cairo(
+                    fontSize: 12,
+                    color: AppColors.textMuted,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 32),
+            ],
           ),
         ),
-      );
+      ),
+    ),
+  );
 }
