@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:test_app_new/core/settings/settings_cubit.dart';
 import 'package:test_app_new/core/theme/app_theme.dart';
+import 'package:test_app_new/home/data/prayer_audio_voice_catalog.dart';
+import 'package:test_app_new/home/models/prayer_audio_voice.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -59,10 +61,61 @@ class SettingsScreen extends StatelessWidget {
                       _buildToggleTile(
                         isDark: isDark,
                         icon: Icons.notifications_outlined,
-                        title: 'مواقيت الصلاة',
-                        subtitle: 'تذكير قبل الأذان',
+                        title: 'تذكير الصلاة',
+                        subtitle:
+                            'قبل الأذان بـ ${settings.prayerReminderMinutes} دقيقة',
                         value: settings.prayerNotifications,
                         onChanged: (_) => cubit.togglePrayerNotifications(),
+                      ),
+                      _buildDivider(isDark),
+                      _buildReminderMinutesTile(isDark, settings, cubit),
+                      _buildDivider(isDark),
+                      _buildToggleTile(
+                        isDark: isDark,
+                        icon: Icons.volume_up_outlined,
+                        title: 'الأذان',
+                        subtitle: 'تشغيل الأذان عند دخول وقت الصلاة',
+                        value: settings.adhanEnabled,
+                        onChanged: (_) => cubit.toggleAdhan(),
+                      ),
+                      _buildDivider(isDark),
+                      _buildToggleTile(
+                        isDark: isDark,
+                        icon: Icons.record_voice_over_outlined,
+                        title: 'الإقامة',
+                        subtitle: 'بعد ١٥ دقيقة، والمغرب بعد ٥ دقائق',
+                        value: settings.iqamaEnabled,
+                        onChanged: (_) => cubit.toggleIqama(),
+                      ),
+                      _buildDivider(isDark),
+                      _buildNavigationTile(
+                        isDark: isDark,
+                        icon: Icons.volume_up_outlined,
+                        title: 'صوت الأذان',
+                        subtitle: PrayerAudioVoiceCatalog
+                            .resolveAdhanVoice(settings.selectedAdhanVoiceId)
+                            .name,
+                        onTap: () => _showVoicePicker(
+                          context,
+                          cubit,
+                          isDark,
+                          PrayerAudioVoiceType.adhan,
+                        ),
+                      ),
+                      _buildDivider(isDark),
+                      _buildNavigationTile(
+                        isDark: isDark,
+                        icon: Icons.record_voice_over_outlined,
+                        title: 'صوت الإقامة',
+                        subtitle: PrayerAudioVoiceCatalog
+                            .resolveIqamaVoice(settings.selectedIqamaVoiceId)
+                            .name,
+                        onTap: () => _showVoicePicker(
+                          context,
+                          cubit,
+                          isDark,
+                          PrayerAudioVoiceType.iqama,
+                        ),
                       ),
                       _buildDivider(isDark),
                       _buildToggleTile(
@@ -256,6 +309,68 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildReminderMinutesTile(
+    bool isDark,
+    SettingsState settings,
+    SettingsCubit cubit,
+  ) {
+    const options = [5, 10, 15, 20, 30];
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      child: Row(
+        children: [
+          DropdownButton<int>(
+            value: settings.prayerReminderMinutes,
+            underline: const SizedBox.shrink(),
+            items: options
+                .map(
+                  (minutes) => DropdownMenuItem(
+                    value: minutes,
+                    child: Text('$minutes دقيقة'),
+                  ),
+                )
+                .toList(),
+            onChanged: (minutes) {
+              if (minutes != null) cubit.setPrayerReminderMinutes(minutes);
+            },
+          ),
+          const Spacer(),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                'وقت التذكير',
+                style: GoogleFonts.cairo(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? AppColors.textLight : AppColors.textPrimary,
+                ),
+              ),
+              Text(
+                'قبل موعد الأذان',
+                style: GoogleFonts.cairo(
+                  fontSize: 12,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(width: 12),
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: AppColors.accentLight,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: const Icon(Icons.schedule, color: AppColors.primary, size: 20),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildNavigationTile({
     required bool isDark,
     required IconData icon,
@@ -361,6 +476,72 @@ class SettingsScreen extends StatelessWidget {
                     : null,
                 onTap: () {
                   cubit.setReciter(r);
+                  Navigator.pop(ctx);
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showVoicePicker(
+    BuildContext context,
+    SettingsCubit cubit,
+    bool isDark,
+    PrayerAudioVoiceType type,
+  ) {
+    final voices = type == PrayerAudioVoiceType.adhan
+        ? PrayerAudioVoiceCatalog.adhanVoices
+        : PrayerAudioVoiceCatalog.iqamaVoices;
+    final selectedId = type == PrayerAudioVoiceType.adhan
+        ? cubit.state.selectedAdhanVoiceId
+        : cubit.state.selectedIqamaVoiceId;
+    final title = type == PrayerAudioVoiceType.adhan
+        ? 'اختر صوت الأذان'
+        : 'اختر صوت الإقامة';
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: isDark ? AppColors.bgCardDark : Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              title,
+              style: GoogleFonts.cairo(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: isDark ? AppColors.textLight : AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 16),
+            ...voices.map(
+              (voice) => ListTile(
+                contentPadding: EdgeInsets.zero,
+                title: Text(
+                  voice.name,
+                  textDirection: TextDirection.rtl,
+                  style: GoogleFonts.cairo(
+                    color: isDark ? AppColors.textLight : AppColors.textPrimary,
+                  ),
+                ),
+                trailing: selectedId == voice.id
+                    ? const Icon(Icons.check, color: AppColors.primary)
+                    : null,
+                onTap: () {
+                  if (type == PrayerAudioVoiceType.adhan) {
+                    cubit.setAdhanVoice(voice);
+                  } else {
+                    cubit.setIqamaVoice(voice);
+                  }
                   Navigator.pop(ctx);
                 },
               ),

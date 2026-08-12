@@ -6,6 +6,7 @@ import 'package:test_app_new/Quran_Section/data/quran_api_service.dart';
 import 'package:test_app_new/azkr_section/data/daily_azkar_progress_service.dart';
 import 'package:test_app_new/home/data/daily_ayah_service.dart';
 import 'package:test_app_new/home/data/home_date_time_service.dart';
+import 'package:test_app_new/home/data/prayer_audio_service.dart';
 import 'package:test_app_new/home/data/prayer_times_service.dart';
 import 'package:test_app_new/home/logic/home_state.dart';
 import 'package:test_app_new/home/models/prayer_times_data.dart';
@@ -13,16 +14,19 @@ import 'package:test_app_new/home/models/prayer_times_data.dart';
 class HomeCubit extends Cubit<HomeState> {
   final HomeDateTimeService _dateTimeService;
   final PrayerTimesService _prayerTimesService;
+  final PrayerAudioService _prayerAudioService;
   final DailyAzkarProgressService _dailyAzkarProgressService;
   final DailyAyahService _dailyAyahService;
 
   HomeCubit({
     HomeDateTimeService? dateTimeService,
     PrayerTimesService? prayerTimesService,
+    PrayerAudioService? prayerAudioService,
     DailyAzkarProgressService? dailyAzkarProgressService,
     DailyAyahService? dailyAyahService,
   }) : _dateTimeService = dateTimeService ?? HomeDateTimeService(),
        _prayerTimesService = prayerTimesService ?? PrayerTimesService(),
+       _prayerAudioService = prayerAudioService ?? PrayerAudioService.shared,
        _dailyAzkarProgressService =
            dailyAzkarProgressService ?? DailyAzkarProgressService(),
        _dailyAyahService = dailyAyahService ?? DailyAyahService(),
@@ -144,7 +148,15 @@ class HomeCubit extends Cubit<HomeState> {
   Future<void> _loadPrayerTimes() async {
     emit(state.copyWith(isPrayerTimesLoading: true));
     try {
-      _emitPrayerTimes(await _prayerTimesService.load(), isLoading: false);
+      final prayerTimes = await _prayerTimesService.load();
+      _emitPrayerTimes(prayerTimes, isLoading: false);
+      try {
+        await _prayerAudioService.schedule(
+          _prayerTimesService.upcomingSchedules(),
+        );
+      } catch (_) {
+        // Audio scheduling must not affect prayer-time calculation or the UI.
+      }
     } on PrayerTimesException catch (error) {
       emit(
         state.copyWith(

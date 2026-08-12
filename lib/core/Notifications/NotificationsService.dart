@@ -95,6 +95,48 @@ class NotificationsService {
     print('✅ تم جدولة إشعار: $title في ${scheduledDate.toString()}');
   }
 
+  static Future<void> schedulePrayerNotification({
+    required int id,
+    required String title,
+    required String body,
+    required TZDateTime scheduledDate,
+    required String channelId,
+    required String channelName,
+    String? soundResource,
+    bool playSound = false,
+  }) async {
+    final hasCustomSound = soundResource != null;
+    await notificationsPlugin.zonedSchedule(
+      id: id,
+      title: title,
+      body: body,
+      scheduledDate: scheduledDate,
+      notificationDetails: NotificationDetails(
+        android: AndroidNotificationDetails(
+          channelId,
+          channelName,
+          channelDescription: 'Prayer time notifications',
+          importance: Importance.max,
+          priority: Priority.high,
+          playSound: playSound,
+          sound: hasCustomSound
+              ? RawResourceAndroidNotificationSound(soundResource)
+              : null,
+          enableVibration: true,
+        ),
+        iOS: DarwinNotificationDetails(
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: playSound,
+          sound: hasCustomSound ? '$soundResource.aiff' : null,
+        ),
+      ),
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+    );
+  }
+
+  static Future<void> cancel(int id) => notificationsPlugin.cancel(id: id);
+
   static Future<void> scheduleAzkarNotifications({
     required String category,
     required tz.Location location,

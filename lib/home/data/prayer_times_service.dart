@@ -3,11 +3,13 @@ import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:test_app_new/home/models/prayer_times_data.dart';
+import 'package:test_app_new/home/models/prayer_schedule.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 class PrayerTimesService {
   tz.Location? _timezone;
+  Coordinates? _coordinates;
   PrayerTimes? _prayerTimes;
   DateTime? _prayerTimesDate;
 
@@ -35,12 +37,12 @@ class PrayerTimesService {
 
     final now = tz.TZDateTime.now(_timezone!);
     _prayerTimesDate = DateTime(now.year, now.month, now.day);
+    _coordinates = Coordinates(position.latitude, position.longitude);
     _prayerTimes = PrayerTimes(
       date: now,
-      coordinates: Coordinates(position.latitude, position.longitude),
+      coordinates: _coordinates!,
       calculationParameters: CalculationMethodParameters.egyptian(),
     );
-    // New prayer data was loaded, so any cached formatted times are stale.
     _cachedTimesMap = null;
     _cachedTimesMapDate = null;
 
@@ -56,6 +58,38 @@ class PrayerTimesService {
     if (_prayerTimesDate != date) return null;
 
     return _buildData(now);
+  }
+
+  List<PrayerSchedule> upcomingSchedules({int days = 3}) {
+    final timezone = _timezone;
+    final coordinates = _coordinates;
+    if (timezone == null || coordinates == null || days <= 0) return const [];
+
+    final now = tz.TZDateTime.now(timezone);
+    return List.generate(days, (offset) {
+      final date = tz.TZDateTime(
+        timezone,
+        now.year,
+        now.month,
+        now.day + offset,
+      );
+      final times = PrayerTimes(
+        date: date,
+        coordinates: coordinates,
+        calculationParameters: CalculationMethodParameters.egyptian(),
+      );
+
+      return PrayerSchedule(
+        date: date,
+        times: {
+          PrayerName.fajr: tz.TZDateTime.from(times.fajr, timezone),
+          PrayerName.dhuhr: tz.TZDateTime.from(times.dhuhr, timezone),
+          PrayerName.asr: tz.TZDateTime.from(times.asr, timezone),
+          PrayerName.maghrib: tz.TZDateTime.from(times.maghrib, timezone),
+          PrayerName.isha: tz.TZDateTime.from(times.isha, timezone),
+        },
+      );
+    });
   }
 
   PrayerTimesData _buildData(tz.TZDateTime now) {
