@@ -30,15 +30,15 @@ class PrayerAudioVoiceCatalog {
 
   static const iqamaVoices = [
     PrayerAudioVoice(
-      id: 'iqama_ali_al_mulla',
-      name: 'علي الملا',
-      assetPath: 'lib/assets/audio/iqama_ali_al_mulla.mp3',
-      type: PrayerAudioVoiceType.iqama,
-    ),
-    PrayerAudioVoice(
       id: 'iqama_al_hosary',
       name: 'الحصري',
       assetPath: 'lib/assets/audio/iqama_al_hosary.mp3',
+      type: PrayerAudioVoiceType.iqama,
+    ),
+    PrayerAudioVoice(
+      id: 'iqama_ali_al_mulla',
+      name: 'علي الملا',
+      assetPath: 'lib/assets/audio/iqama_ali_al_mulla.mp3',
       type: PrayerAudioVoiceType.iqama,
     ),
   ];

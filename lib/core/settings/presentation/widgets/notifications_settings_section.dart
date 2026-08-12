@@ -6,6 +6,7 @@ import 'package:test_app_new/core/theme/app_theme.dart';
 import 'package:test_app_new/home/data/prayer_audio_voice_catalog.dart';
 import 'package:test_app_new/home/models/prayer_audio_voice.dart';
 import 'package:test_app_new/core/settings/presentation/widgets/settings_components.dart';
+import 'package:test_app_new/core/settings/data/prayer_audio_preview_service.dart';
 
 class NotificationsSettingsSection extends StatelessWidget {
   final bool isDark;
@@ -18,7 +19,15 @@ class NotificationsSettingsSection extends StatelessWidget {
     return BlocSelector<
       SettingsCubit,
       SettingsState,
-      ({bool prayer, bool adhan, bool iqama, int minutes, bool azkar, String adhanVoice, String iqamaVoice})
+      ({
+        bool prayer,
+        bool adhan,
+        bool iqama,
+        int minutes,
+        bool azkar,
+        String adhanVoice,
+        String iqamaVoice,
+      })
     >(
       selector: (state) => (
         prayer: state.prayerNotifications,
@@ -73,9 +82,15 @@ class NotificationsSettingsSection extends StatelessWidget {
                 isDark: isDark,
                 icon: Icons.volume_up_outlined,
                 title: 'صوت الأذان',
-                subtitle: PrayerAudioVoiceCatalog.resolveAdhanVoice(settings.adhanVoice).name,
+                subtitle: PrayerAudioVoiceCatalog.resolveAdhanVoice(
+                  settings.adhanVoice,
+                ).name,
                 onTap: () => _showVoicePicker(
-                  context, cubit, isDark, PrayerAudioVoiceType.adhan, settings.adhanVoice,
+                  context,
+                  cubit,
+                  isDark,
+                  PrayerAudioVoiceType.adhan,
+                  settings.adhanVoice,
                 ),
               ),
               SettingsDivider(isDark: isDark),
@@ -83,9 +98,15 @@ class NotificationsSettingsSection extends StatelessWidget {
                 isDark: isDark,
                 icon: Icons.record_voice_over_outlined,
                 title: 'صوت الإقامة',
-                subtitle: PrayerAudioVoiceCatalog.resolveIqamaVoice(settings.iqamaVoice).name,
+                subtitle: PrayerAudioVoiceCatalog.resolveIqamaVoice(
+                  settings.iqamaVoice,
+                ).name,
                 onTap: () => _showVoicePicker(
-                  context, cubit, isDark, PrayerAudioVoiceType.iqama, settings.iqamaVoice,
+                  context,
+                  cubit,
+                  isDark,
+                  PrayerAudioVoiceType.iqama,
+                  settings.iqamaVoice,
                 ),
               ),
               SettingsDivider(isDark: isDark),
@@ -139,33 +160,56 @@ class NotificationsSettingsSection extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            ...voices.map(
-              (voice) => ListTile(
-                contentPadding: EdgeInsets.zero,
-                title: Text(
-                  voice.name,
-                  textDirection: TextDirection.rtl,
-                  style: GoogleFonts.cairo(
-                    color: isDark ? AppColors.textLight : AppColors.textPrimary,
-                  ),
-                ),
-                trailing: selectedId == voice.id
-                    ? const Icon(Icons.check, color: AppColors.primary)
-                    : null,
-                onTap: () {
-                  if (type == PrayerAudioVoiceType.adhan) {
-                    cubit.setAdhanVoice(voice);
-                  } else {
-                    cubit.setIqamaVoice(voice);
-                  }
-                  Navigator.pop(ctx);
-                },
+            ValueListenableBuilder<String?>(
+              valueListenable:
+                  PrayerAudioPreviewService.instance.playingVoiceId,
+              builder: (context, playingId, _) => Column(
+                children: voices
+                    .map(
+                      (voice) => ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: IconButton(
+                          icon: Icon(
+                            playingId == voice.id
+                                ? Icons.stop_circle_outlined
+                                : Icons.play_circle_outline,
+                            color: isDark
+                                ? AppColors.textLight
+                                : AppColors.textPrimary,
+                          ),
+                          tooltip: 'معاينة الصوت',
+                          onPressed: () => PrayerAudioPreviewService.instance
+                              .togglePreview(voice),
+                        ),
+                        title: Text(
+                          voice.name,
+                          textDirection: TextDirection.rtl,
+                          style: GoogleFonts.cairo(
+                            color: isDark
+                                ? AppColors.textLight
+                                : AppColors.textPrimary,
+                          ),
+                        ),
+                        trailing: selectedId == voice.id
+                            ? const Icon(Icons.check, color: AppColors.primary)
+                            : null,
+                        onTap: () {
+                          if (type == PrayerAudioVoiceType.adhan) {
+                            cubit.setAdhanVoice(voice);
+                          } else {
+                            cubit.setIqamaVoice(voice);
+                          }
+                          Navigator.pop(ctx);
+                        },
+                      ),
+                    )
+                    .toList(),
               ),
             ),
           ],
         ),
       ),
-    );
+    ).whenComplete(() => PrayerAudioPreviewService.instance.stop());
   }
 }
 
@@ -191,7 +235,12 @@ class _ReminderMinutesTile extends StatelessWidget {
             value: minutes,
             underline: const SizedBox.shrink(),
             items: options
-                .map((value) => DropdownMenuItem(value: value, child: Text('$value دقيقة')))
+                .map(
+                  (value) => DropdownMenuItem(
+                    value: value,
+                    child: Text('$value دقيقة'),
+                  ),
+                )
                 .toList(),
             onChanged: (value) {
               if (value != null) onChanged(value);
@@ -211,7 +260,10 @@ class _ReminderMinutesTile extends StatelessWidget {
               ),
               Text(
                 'قبل موعد الأذان',
-                style: GoogleFonts.cairo(fontSize: 12, color: AppColors.textSecondary),
+                style: GoogleFonts.cairo(
+                  fontSize: 12,
+                  color: AppColors.textSecondary,
+                ),
               ),
             ],
           ),
