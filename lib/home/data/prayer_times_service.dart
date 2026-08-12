@@ -1,5 +1,6 @@
 import 'package:adhan_dart/adhan_dart.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:test_app_new/home/models/prayer_times_data.dart';
@@ -12,6 +13,7 @@ class PrayerTimesService {
   Coordinates? _coordinates;
   PrayerTimes? _prayerTimes;
   DateTime? _prayerTimesDate;
+  String? _locationName;
 
   Map<String, String>? _cachedTimesMap;
   DateTime? _cachedTimesMapDate;
@@ -46,7 +48,44 @@ class PrayerTimesService {
     _cachedTimesMap = null;
     _cachedTimesMapDate = null;
 
+    await _resolveLocationName(position);
+
     return _buildData(now);
+  }
+
+  Future<void> _resolveLocationName(Position position) async {
+    try {
+      final placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+      if (placemarks.isNotEmpty) {
+        final pm = placemarks.first;
+        final city = pm.locality?.trim();
+        if (city != null && city.isNotEmpty) {
+          _locationName = city;
+          return;
+        }
+        final subAdmin = pm.subAdministrativeArea?.trim();
+        if (subAdmin != null && subAdmin.isNotEmpty) {
+          _locationName = subAdmin;
+          return;
+        }
+        final admin = pm.administrativeArea?.trim();
+        if (admin != null && admin.isNotEmpty) {
+          _locationName = admin;
+          return;
+        }
+        final country = pm.country?.trim();
+        if (country != null && country.isNotEmpty) {
+          _locationName = country;
+          return;
+        }
+      }
+    } catch (_) {
+      // Fall through to default
+    }
+    _locationName = null;
   }
 
   PrayerTimesData? current() {
@@ -94,8 +133,6 @@ class PrayerTimesService {
 
   PrayerTimesData _buildData(tz.TZDateTime now) {
     final today = DateTime(now.year, now.month, now.day);
-    // The formatted prayer-time strings only change once a day, so they're
-    // cached instead of being reformatted on every per-second refresh.
     if (_cachedTimesMap == null || _cachedTimesMapDate != today) {
       _cachedTimesMapDate = today;
       _cachedTimesMap = _buildTimesMap();
@@ -106,7 +143,7 @@ class PrayerTimesService {
       nextPrayer: nextPrayer.name,
       nextPrayerTime: _formatTime(nextPrayer.time),
       countdown: _formatCountdown(nextPrayer.time.difference(now)),
-      location: 'موقعك الحالي',
+      location: _locationName ?? 'موقعك الحالي',
     );
   }
 

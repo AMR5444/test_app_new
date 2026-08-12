@@ -180,10 +180,12 @@ class _PrayerAudioTestScreenState extends State<PrayerAudioTestScreen> {
                 border: Border.all(color: Colors.orange.withOpacity(0.3)),
               ),
               child: Text(
-                '⚠️ هذه الشاشة مؤقتة للاختبار فقط.\n'
-                'احذف مجلد test_screens وكل الاستدعاءات المؤقتة بعد الانتهاء.',
+                'ملاحظة: جررررب الاذان من هنا يا علي يا سيد يا بدوي .',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.cairo(fontSize: 12, color: Colors.orange),
+                style: GoogleFonts.cairo(
+                  fontSize: 13,
+                  color: Colors.orange[800],
+                ),
               ),
             ),
           ],
