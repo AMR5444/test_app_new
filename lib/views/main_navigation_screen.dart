@@ -3,11 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:test_app_new/Quran_Section/views/quran_index_screen.dart';
 import 'package:test_app_new/azkr_section/views/azkarCategori_Screen.dart';
-import 'package:test_app_new/core/settings/settings_cubit.dart';
+import 'package:test_app_new/core/settings/logic/settings_cubit.dart';
 import 'package:test_app_new/core/theme/app_theme.dart';
 import 'package:test_app_new/home/views/home_screen.dart';
 import 'package:test_app_new/views/qibla_screen.dart';
-import 'package:test_app_new/views/settings_screen.dart';
+import 'package:test_app_new/core/settings/presentation/views/settings_screen.dart';
 
 class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({super.key});
@@ -25,9 +25,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<SettingsCubit, SettingsState>(
-      builder: (context, settings) {
-        final isDark = settings.isDarkMode;
+    return BlocSelector<SettingsCubit, SettingsState, bool>(
+      selector: (state) => state.isDarkMode,
+      builder: (context, isDark) {
 
         final List<Widget> screens = [
           HomeScreen(onNavigate: _navigateTo, isVisible: _currentIndex == 0),

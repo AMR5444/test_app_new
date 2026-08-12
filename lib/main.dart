@@ -6,7 +6,7 @@ import 'package:test_app_new/views/main_navigation_screen.dart';
 import 'package:test_app_new/azkr_section/logic/azkar_cubit.dart';
 import 'package:test_app_new/azkr_section/views/azkarCategori_Screen.dart';
 import 'package:test_app_new/core/Notifications/NotificationsService.dart';
-import 'package:test_app_new/core/settings/settings_cubit.dart';
+import 'package:test_app_new/core/settings/logic/settings_cubit.dart';
 import 'package:test_app_new/core/theme/app_theme.dart';
 import 'azkr_section/data/Azkar_API.dart';
 import 'core/Notifications/azkar_scheduler.dart';
@@ -46,15 +46,16 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => AzkarCubit(AzkarApi())),
         BlocProvider(create: (_) => SettingsCubit()),
       ],
-      child: BlocBuilder<SettingsCubit, SettingsState>(
-        builder: (context, settings) {
+      child: BlocSelector<SettingsCubit, SettingsState, bool>(
+        selector: (state) => state.isDarkMode,
+        builder: (context, isDarkMode) {
           return MaterialApp(
             navigatorKey: NotificationsService.navigatorKey,
             debugShowCheckedModeBanner: false,
             title: 'نور',
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
-            themeMode: settings.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+            themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
             home: const MainNavigationScreen(),
             routes: {
               '/azkar': (context) {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:test_app_new/azkr_section/views/Generic%20Azkar%20Screen.dart';
-import 'package:test_app_new/core/settings/settings_cubit.dart';
+import 'package:test_app_new/core/settings/logic/settings_cubit.dart';
 import 'package:test_app_new/core/theme/app_theme.dart';
 
 class AzkarCategoriesScreen extends StatelessWidget {

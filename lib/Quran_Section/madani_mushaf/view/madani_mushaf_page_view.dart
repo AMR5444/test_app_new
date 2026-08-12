@@ -7,7 +7,7 @@ import 'package:test_app_new/Quran_Section/madani_mushaf/global_ayah_utils.dart'
 import 'package:test_app_new/Quran_Section/models/LastRead_model.dart';
 import 'package:test_app_new/Quran_Section/models/ayah_model.dart';
 import 'package:test_app_new/Quran_Section/widgets/ayah_options_sheet.dart';
-import 'package:test_app_new/core/settings/settings_cubit.dart';
+import 'package:test_app_new/core/settings/logic/settings_cubit.dart';
 
 const Color _kHeaderBg = Color(0xFF1A5C38);
 const Color _kGold = Color(0xFFC5A028);

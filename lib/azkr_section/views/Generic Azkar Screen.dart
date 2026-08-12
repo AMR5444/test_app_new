@@ -5,7 +5,7 @@ import 'package:test_app_new/azkr_section/data/Azkar_API.dart';
 import 'package:test_app_new/azkr_section/logic/azkar_cubit.dart';
 import 'package:test_app_new/azkr_section/logic/azkar_state.dart';
 import 'package:test_app_new/azkr_section/models/azkar_model.dart';
-import 'package:test_app_new/core/settings/settings_cubit.dart';
+import 'package:test_app_new/core/settings/logic/settings_cubit.dart';
 import 'package:test_app_new/core/theme/app_theme.dart';
 
 class AzkarScreen extends StatelessWidget {

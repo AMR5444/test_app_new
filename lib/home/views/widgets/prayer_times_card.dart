@@ -156,9 +156,6 @@ class PrayerTimesCard extends StatelessWidget {
   }
 }
 
-/// Shows the loading/error message, or the live countdown to the next
-/// prayer. Isolated in its own widget with its own [BlocSelector] so the
-/// per-second countdown tick only rebuilds this small Text, not the whole
 /// [PrayerTimesCard].
 class _StatusText extends StatelessWidget {
   final bool showLoading;

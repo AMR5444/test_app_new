@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:test_app_new/Quran_Section/data/quran_api_service.dart';
 import 'package:test_app_new/Quran_Section/models/ayah_model.dart';
 import 'package:test_app_new/core/theme/app_theme.dart';
-import 'package:test_app_new/settings/app_settings_controller.dart';
 
 class MushafReaderScreen extends StatefulWidget {
   final String surahName;
@@ -27,14 +26,11 @@ class _MushafReaderScreenState extends State<MushafReaderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final settings = AppSettingsController.instance;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? AppColors.bgDark : AppColors.bgCard;
     final textColor = isDark ? AppColors.primaryDark : AppColors.primaryLight;
 
-    return AnimatedBuilder(
-      animation: settings,
-      builder: (context, _) => Scaffold(
+    return Scaffold(
         backgroundColor: bg,
         appBar: AppBar(
           title: Text(
@@ -76,7 +72,7 @@ class _MushafReaderScreenState extends State<MushafReaderScreen> {
                     textDirection: TextDirection.rtl,
                     style: TextStyle(
                       fontFamily: 'Amiri',
-                      fontSize: settings.quranFontSize,
+                      fontSize: 26,
                       height: 2.0,
                       letterSpacing: 0.1,
                       color: textColor,
@@ -87,7 +83,6 @@ class _MushafReaderScreenState extends State<MushafReaderScreen> {
             );
           },
         ),
-      ),
     );
   }
 }
