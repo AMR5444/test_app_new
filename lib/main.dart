@@ -12,7 +12,7 @@ import 'azkr_section/data/Azkar_API.dart';
 import 'core/Notifications/azkar_scheduler.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-Future<void> requestNotificationPermission() async {
+Future requestNotificationPermission() async {
   final status = await Permission.notification.status;
   if (!status.isGranted) {
     await Permission.notification.request();

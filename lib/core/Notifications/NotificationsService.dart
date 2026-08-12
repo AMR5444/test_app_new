@@ -205,15 +205,29 @@ class NotificationsService {
 
   static String? _resolveAndroidSoundResourceName(String? assetPath) {
     if (assetPath == null || assetPath.isEmpty) return null;
+
+    const assetToResource = {
+      'adhan_mishary': 'a7_mishary_rashid_alafasy',
+      'adhan_mansour_al_zahrani': 'a11_mansour_al_zahrani',
+      'adhan_ahmad_al_nafees': 'a1_ahmad_al_nafees',
+      'adhan_mustafa_ozcan': 'a2_hafiz_mustafa_zcan',
+      'iqama_al_hosary': 'lqama1_al_hosary',
+      'iqama_ali_al_mulla': 'lqama2_ali_al_mulla',
+    };
+
     final fileName = assetPath.split('/').last;
     final withoutExtension = fileName.contains('.')
         ? fileName.substring(0, fileName.lastIndexOf('.'))
         : fileName;
-    final resourceName = withoutExtension.toLowerCase().replaceAll(
+
+    final mapped = assetToResource[withoutExtension];
+    if (mapped != null) return mapped;
+
+    final fallback = withoutExtension.toLowerCase().replaceAll(
       RegExp(r'[^a-z0-9_]'),
       '_',
     );
-    return resourceName.isEmpty ? null : resourceName;
+    return fallback.isEmpty ? null : fallback;
   }
 
   static Future<void> cancel(int id) => notificationsPlugin.cancel(id: id);
