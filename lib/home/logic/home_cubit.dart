@@ -37,6 +37,7 @@ class HomeCubit extends Cubit<HomeState> {
   Timer? _timer;
   StreamSubscription? _azkarStatsSubscription;
   DateTime? _lastReadingStatsRefresh;
+  DateTime? _lastDailyAyahDate;
   bool _initialized = false;
   bool _timerAllowed = true;
 
@@ -79,6 +80,15 @@ class HomeCubit extends Cubit<HomeState> {
 
   void _updateHomeData() {
     final now = DateTime.now();
+
+    if (_lastDailyAyahDate == null ||
+        _lastDailyAyahDate!.year != now.year ||
+        _lastDailyAyahDate!.month != now.month ||
+        _lastDailyAyahDate!.day != now.day) {
+      _lastDailyAyahDate = DateTime(now.year, now.month, now.day);
+      _loadDailyAyah();
+    }
+
     final dateTime = _dateTimeService.format(now);
     _refreshTodayReadingMinutes(now);
 
