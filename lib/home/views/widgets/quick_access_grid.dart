@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:test_app_new/core/theme/app_theme.dart';
+import 'package:test_app_new/tasbeeh_section/presentation/view/tasbeeh_screen.dart';
 
 class QuickAccessGrid extends StatelessWidget {
   final bool isDark;
@@ -12,13 +13,15 @@ class QuickAccessGrid extends StatelessWidget {
     required this.onNavigate,
   });
 
+  // 'tab' switches to that bottom-nav tab; a null 'tab' pushes the Tasbeeh
+  // screen directly, since it isn't part of the bottom-nav tab set.
   static const List<Map<String, dynamic>> _items = [
     {'icon': Icons.explore_outlined, 'label': 'القبلة', 'tab': 3},
     {'icon': Icons.auto_awesome_outlined, 'label': 'الأذكار', 'tab': 2},
     {'icon': Icons.menu_book_outlined, 'label': 'المصحف', 'tab': 1},
     {'icon': Icons.history, 'label': 'أخر قراءة', 'tab': 1},
     {'icon': Icons.favorite_outline, 'label': 'المفضلة', 'tab': 1},
-    {'icon': Icons.touch_app_outlined, 'label': 'التسبيح', 'tab': 2},
+    {'icon': Icons.touch_app_outlined, 'label': 'التسبيح', 'tab': null},
   ];
 
   @override
@@ -37,8 +40,17 @@ class QuickAccessGrid extends StatelessWidget {
         ),
         itemBuilder: (context, index) {
           final item = _items[index];
+          final tab = item['tab'] as int?;
           return GestureDetector(
-            onTap: () => onNavigate(item['tab'] as int),
+            onTap: () {
+              if (tab != null) {
+                onNavigate(tab);
+              } else {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const TasbeehScreen()),
+                );
+              }
+            },
             child: Container(
               decoration: BoxDecoration(
                 color: isDark ? AppColors.bgCardDark : Colors.white,

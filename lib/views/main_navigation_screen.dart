@@ -6,6 +6,7 @@ import 'package:test_app_new/azkr_section/views/azkarCategori_Screen.dart';
 import 'package:test_app_new/core/settings/logic/settings_cubit.dart';
 import 'package:test_app_new/core/theme/app_theme.dart';
 import 'package:test_app_new/home/views/home_screen.dart';
+import 'package:test_app_new/tasbeeh_section/presentation/view/tasbeeh_screen.dart';
 import 'package:test_app_new/views/qibla_screen.dart';
 import 'package:test_app_new/core/settings/presentation/views/settings_screen.dart';
 
@@ -28,13 +29,13 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     return BlocSelector<SettingsCubit, SettingsState, bool>(
       selector: (state) => state.isDarkMode,
       builder: (context, isDark) {
-
         final List<Widget> screens = [
           HomeScreen(onNavigate: _navigateTo, isVisible: _currentIndex == 0),
           const QuranIndexScreen(),
           const AzkarCategoriesScreen(),
           const QiblaScreen(),
           const SettingsScreen(),
+          const TasbeehScreen(),
         ];
 
         return Scaffold(
