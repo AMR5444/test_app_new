@@ -584,6 +584,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.8"
+  haptic_feedback:
+    dependency: "direct main"
+    description:
+      name: haptic_feedback
+      sha256: c6b7ce370f17142cd6df1ed29add2cf50393aa967d9c5638e6fb7dbeff7414ec
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.6.5"
+  headup_loading:
+    dependency: "direct main"
+    description:
+      name: headup_loading
+      sha256: a2f314a9ca4d7c88326a850e33e85d54537062e803685c9ad308f034ce21196a
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.5"
   hijri:
     dependency: "direct main"
     description:
@@ -760,6 +776,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.1.0"
+  location:
+    dependency: "direct main"
+    description:
+      name: location
+      sha256: "4cc204cc1ea237ac608d2d621ddeed40d7f62564693126420c5ebe6d1fa8c5ea"
+      url: "https://pub.dev"
+    source: hosted
+    version: "10.0.2"
+  location_platform_interface:
+    dependency: transitive
+    description:
+      name: location_platform_interface
+      sha256: "0b1aff439c77f1ec204c95ee84640f5eb8c5904cc11f0a613a6842ac1116272c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.0.0"
+  location_web:
+    dependency: transitive
+    description:
+      name: location_web
+      sha256: "1a50fe9eb4d7d33c70d65a3f2c83acbba20c380be699bcb5357b6756ef195eba"
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.0.0"
   logging:
     dependency: transitive
     description:
@@ -1048,6 +1088,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.3.8"
+  sensors_plus:
+    dependency: "direct main"
+    description:
+      name: sensors_plus
+      sha256: "31182c626623de79d3f7e1f9b43028f940821ee012c092f68f165fe55b867822"
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.1.0"
+  sensors_plus_platform_interface:
+    dependency: transitive
+    description:
+      name: sensors_plus_platform_interface
+      sha256: "9e12a92569bf14ae04b2f086c3e087177a47e527b7666ae1bbe5f70f8450ab19"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.2"
   share_plus:
     dependency: "direct main"
     description:
