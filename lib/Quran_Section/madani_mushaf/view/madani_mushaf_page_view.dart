@@ -8,6 +8,7 @@ import 'package:test_app_new/Quran_Section/models/LastRead_model.dart';
 import 'package:test_app_new/Quran_Section/models/ayah_model.dart';
 import 'package:test_app_new/Quran_Section/widgets/ayah_options_sheet.dart';
 import 'package:test_app_new/core/settings/logic/settings_cubit.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 const Color _kHeaderBg = Color(0xFF1A5C38);
 const Color _kGold = Color(0xFFC5A028);
@@ -25,7 +26,6 @@ int _juzForPage(int page) {
 
   final firstEntry = entries.first;
   if (firstEntry is! Map) return 1;
-
   final surah = firstEntry['surah'];
   final start = firstEntry['start'];
   if (surah is! int || start is! int) return 1;
@@ -62,6 +62,7 @@ class _MadaniMushafPageViewState extends State<MadaniMushafPageView>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     DailyReadingService.shared.startReading();
+    WakelockPlus.enable();
 
     final startPage = widget.restoreLastPosition
         ? null // هيتحدد في _restoreIfNeeded بعد الفريم الأول
@@ -103,6 +104,7 @@ class _MadaniMushafPageViewState extends State<MadaniMushafPageView>
 
   @override
   void dispose() {
+    WakelockPlus.disable();
     WidgetsBinding.instance.removeObserver(this);
     DailyReadingService.shared.stopReading();
     LastPositionService.saveLastPosition(

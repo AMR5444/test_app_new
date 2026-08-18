@@ -57,6 +57,7 @@ dependencies:
   flutter_timezone: ^5.1.0
   hijri: ^3.0.0
   geocoding: ^3.0.0
+  wakelock_plus: ^1.2.10
 
 
 dev_dependencies:
