@@ -39,6 +39,8 @@ class SensorService {
 
   StreamController<HeadingReading>? _controller;
 
+  bool _isActive = false;
+
   bool get isListening => _accelSub != null && _magnetSub != null;
 
   Stream<HeadingReading> headingStream() {
@@ -50,6 +52,9 @@ class SensorService {
   }
 
   void _startListening() {
+    if (_isActive) return;
+    _isActive = true;
+
     _accelSub ??= accelerometerEventStream().listen((event) {
       _lastAccel = [event.x, event.y, event.z];
       _emitIfReady();
@@ -62,6 +67,9 @@ class SensorService {
   }
 
   void _stopListening() {
+    if (!_isActive) return;
+    _isActive = false;
+
     _accelSub?.cancel();
     _magnetSub?.cancel();
     _accelSub = null;

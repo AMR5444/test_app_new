@@ -11,8 +11,17 @@ class QiblaInfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<QiblaCubit, QiblaState>(
-      builder: (context, state) {
+    return BlocSelector<
+      QiblaCubit,
+      QiblaState,
+      ({double? bearing, double? heading, double? distanceKm})
+    >(
+      selector: (state) => (
+        bearing: state.qiblaBearing,
+        heading: state.heading,
+        distanceKm: state.distanceKm,
+      ),
+      builder: (context, selected) {
         return Container(
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
           decoration: BoxDecoration(
@@ -25,19 +34,19 @@ class QiblaInfoCard extends StatelessWidget {
               _InfoItem(
                 isDark: isDark,
                 label: 'اتجاه القبلة',
-                value: _formatDegrees(state.qiblaBearing),
+                value: _formatDegrees(selected.bearing),
               ),
               _Divider(isDark: isDark),
               _InfoItem(
                 isDark: isDark,
                 label: 'اتجاه الجهاز',
-                value: _formatDegrees(state.heading),
+                value: _formatDegrees(selected.heading),
               ),
               _Divider(isDark: isDark),
               _InfoItem(
                 isDark: isDark,
                 label: 'المسافة لمكة',
-                value: _formatDistance(state.distanceKm),
+                value: _formatDistance(selected.distanceKm),
               ),
             ],
           ),

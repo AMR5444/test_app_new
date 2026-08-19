@@ -11,19 +11,23 @@ import 'package:test_app_new/core/settings/logic/settings_cubit.dart';
 import 'package:test_app_new/core/theme/app_theme.dart';
 
 class QiblaScreen extends StatelessWidget {
-  const QiblaScreen({super.key});
+  final bool isVisible;
+
+  const QiblaScreen({super.key, this.isVisible = true});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => QiblaCubit(),
-      child: const _QiblaScreenContent(),
+      child: _QiblaScreenContent(isVisible: isVisible),
     );
   }
 }
 
 class _QiblaScreenContent extends StatelessWidget {
-  const _QiblaScreenContent();
+  final bool isVisible;
+
+  const _QiblaScreenContent({required this.isVisible});
 
   @override
   Widget build(BuildContext context) {
@@ -35,27 +39,30 @@ class _QiblaScreenContent extends StatelessWidget {
       backgroundColor: isDark ? AppColors.bgDark : AppColors.bgLight,
       appBar: AppBar(title: const Text('اتجاه القبلة')),
       body: SafeArea(
-        child: BlocConsumer<QiblaCubit, QiblaState>(
-          buildWhen: (previous, current) => previous.status != current.status,
-          listenWhen: (previous, current) =>
-              current.isFacingQibla && !previous.isFacingQibla,
-          listener: (context, state) => HapticFeedback.mediumImpact(),
-          builder: (context, state) {
-            switch (state.status) {
-              case QiblaStatus.initial:
-              case QiblaStatus.loading:
-                return Center(
-                  child: CircularProgressIndicator(color: AppColors.primary),
-                );
-              case QiblaStatus.error:
-                return QiblaErrorView(
-                  isDark: isDark,
-                  message: state.errorMessage ?? 'حدث خطأ غير متوقع',
-                );
-              case QiblaStatus.success:
-                return _QiblaContent(isDark: isDark);
-            }
-          },
+        child: TickerMode(
+          enabled: isVisible,
+          child: BlocConsumer<QiblaCubit, QiblaState>(
+            buildWhen: (previous, current) => previous.status != current.status,
+            listenWhen: (previous, current) =>
+                current.isFacingQibla && !previous.isFacingQibla,
+            listener: (context, state) => HapticFeedback.mediumImpact(),
+            builder: (context, state) {
+              switch (state.status) {
+                case QiblaStatus.initial:
+                case QiblaStatus.loading:
+                  return Center(
+                    child: CircularProgressIndicator(color: AppColors.primary),
+                  );
+                case QiblaStatus.error:
+                  return QiblaErrorView(
+                    isDark: isDark,
+                    message: state.errorMessage ?? 'حدث خطأ غير متوقع',
+                  );
+                case QiblaStatus.success:
+                  return _QiblaContent(isDark: isDark);
+              }
+            },
+          ),
         ),
       ),
     );

@@ -22,6 +22,8 @@ class QiblaState extends Equatable {
 
   final String? errorMessage;
 
+  final String? locationName;
+
   const QiblaState({
     this.status = QiblaStatus.initial,
     this.latitude,
@@ -32,6 +34,7 @@ class QiblaState extends Equatable {
     this.distanceKm,
     this.isFacingQibla = false,
     this.errorMessage,
+    this.locationName,
   });
 
   QiblaState copyWith({
@@ -45,6 +48,7 @@ class QiblaState extends Equatable {
     bool? isFacingQibla,
     String? errorMessage,
     bool clearErrorMessage = false,
+    String? locationName,
   }) {
     return QiblaState(
       status: status ?? this.status,
@@ -58,6 +62,7 @@ class QiblaState extends Equatable {
       errorMessage: clearErrorMessage
           ? null
           : errorMessage ?? this.errorMessage,
+      locationName: locationName ?? this.locationName,
     );
   }
 
@@ -72,5 +77,6 @@ class QiblaState extends Equatable {
     distanceKm,
     isFacingQibla,
     errorMessage,
+    locationName,
   ];
 }

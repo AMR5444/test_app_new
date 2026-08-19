@@ -80,6 +80,8 @@ class _AnimatedNeedleState extends State<_AnimatedNeedle>
   double _committedTurns = 0;
   static const Duration _animationDuration = Duration(milliseconds: 220);
 
+  static const double _jitterToleranceDegrees = 0.6;
+
   @override
   void initState() {
     super.initState();
@@ -99,13 +101,21 @@ class _AnimatedNeedleState extends State<_AnimatedNeedle>
       return;
     }
 
+    final currentDisplayedTurns = _turnsAnimation.value;
+
     final targetTurns = _nextUnwrappedTurns(
-      currentTurns: _committedTurns,
+      currentTurns: currentDisplayedTurns,
       targetAngleDegrees: widget.relativeAngleDegrees,
     );
 
+    final deltaDegrees = (targetTurns - currentDisplayedTurns) * 360;
+    if (deltaDegrees.abs() < _jitterToleranceDegrees) {
+      _committedTurns = targetTurns;
+      return;
+    }
+
     _turnsAnimation = Tween<double>(
-      begin: _committedTurns,
+      begin: currentDisplayedTurns,
       end: targetTurns,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
 

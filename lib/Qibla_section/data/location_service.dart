@@ -1,6 +1,35 @@
+import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 
 class LocationService {
+  Future<String?> resolveLocationName(double latitude, double longitude) async {
+    try {
+      final placemarks = await placemarkFromCoordinates(latitude, longitude);
+      if (placemarks.isEmpty) return null;
+
+      final placemark = placemarks.first;
+      final city = _firstNonEmpty([
+        placemark.locality,
+        placemark.subAdministrativeArea,
+        placemark.administrativeArea,
+      ]);
+      final country = _firstNonEmpty([placemark.country]);
+
+      if (city != null && country != null) return '$city، $country';
+      return city ?? country;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  String? _firstNonEmpty(List<String?> values) {
+    for (final value in values) {
+      final trimmed = value?.trim();
+      if (trimmed != null && trimmed.isNotEmpty) return trimmed;
+    }
+    return null;
+  }
+
   Future<Position> getCurrentPosition() async {
     await _ensureServiceEnabled();
     await _ensurePermissionGranted();

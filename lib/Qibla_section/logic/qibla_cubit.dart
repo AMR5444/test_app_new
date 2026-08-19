@@ -27,11 +27,22 @@ class QiblaCubit extends Cubit<QiblaState> {
   StreamSubscription<Position>? _positionSubscription;
   StreamSubscription<HeadingReading>? _headingSubscription;
 
+  bool _isInitializing = false;
+
   Future<void> _init() async {
+    if (_isInitializing) return;
+    _isInitializing = true;
+
+    await _positionSubscription?.cancel();
+    await _headingSubscription?.cancel();
+    _positionSubscription = null;
+    _headingSubscription = null;
+
     emit(state.copyWith(status: QiblaStatus.loading, clearErrorMessage: true));
 
     try {
       final position = await _locationService.getCurrentPosition();
+      if (isClosed) return;
       _applyPosition(position);
 
       _positionSubscription = _locationService.watchPosition().listen(
@@ -47,6 +58,8 @@ class QiblaCubit extends Cubit<QiblaState> {
       _handleError(e);
     } catch (e) {
       _handleError(e);
+    } finally {
+      _isInitializing = false;
     }
   }
 

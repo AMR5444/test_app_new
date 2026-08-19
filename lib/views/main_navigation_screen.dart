@@ -33,7 +33,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           HomeScreen(onNavigate: _navigateTo, isVisible: _currentIndex == 0),
           const QuranIndexScreen(),
           const AzkarCategoriesScreen(),
-          const QiblaScreen(),
+          QiblaScreen(isVisible: _currentIndex == 3),
           const SettingsScreen(),
           const TasbeehScreen(),
         ];
