@@ -1,35 +1,7 @@
-import 'package:geocoding/geocoding.dart';
+import 'package:geocoding/geocoding.dart' as geocoding;
 import 'package:geolocator/geolocator.dart';
 
 class LocationService {
-  Future<String?> resolveLocationName(double latitude, double longitude) async {
-    try {
-      final placemarks = await placemarkFromCoordinates(latitude, longitude);
-      if (placemarks.isEmpty) return null;
-
-      final placemark = placemarks.first;
-      final city = _firstNonEmpty([
-        placemark.locality,
-        placemark.subAdministrativeArea,
-        placemark.administrativeArea,
-      ]);
-      final country = _firstNonEmpty([placemark.country]);
-
-      if (city != null && country != null) return '$city، $country';
-      return city ?? country;
-    } catch (_) {
-      return null;
-    }
-  }
-
-  String? _firstNonEmpty(List<String?> values) {
-    for (final value in values) {
-      final trimmed = value?.trim();
-      if (trimmed != null && trimmed.isNotEmpty) return trimmed;
-    }
-    return null;
-  }
-
   Future<Position> getCurrentPosition() async {
     await _ensureServiceEnabled();
     await _ensurePermissionGranted();
@@ -55,6 +27,47 @@ class LocationService {
         distanceFilter: distanceFilterMeters,
       ),
     );
+  }
+
+  /// Reverse geocodes [latitude]/[longitude] into a "City, Country" label.
+  /// Returns null on any failure so the caller can fall back gracefully.
+  Future<String?> getPlaceName(double latitude, double longitude) async {
+    try {
+      final placemarks = await geocoding.placemarkFromCoordinates(
+        latitude,
+        longitude,
+      );
+
+      if (placemarks.isEmpty) return null;
+
+      final placemark = placemarks.first;
+      final city = _firstNonEmpty([
+        placemark.locality,
+        placemark.subAdministrativeArea,
+        placemark.administrativeArea,
+      ]);
+      final country = _firstNonEmpty([placemark.country]);
+
+      if (city != null && country != null) return '$city, $country';
+      return city ?? country;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  String formatCoordinatesFallback(double latitude, double longitude) {
+    final latDir = latitude >= 0 ? 'شمال' : 'جنوب';
+    final lngDir = longitude >= 0 ? 'شرق' : 'غرب';
+    return '${latitude.abs().toStringAsFixed(2)}° $latDir، '
+        '${longitude.abs().toStringAsFixed(2)}° $lngDir';
+  }
+
+  String? _firstNonEmpty(List<String?> values) {
+    for (final value in values) {
+      final trimmed = value?.trim();
+      if (trimmed != null && trimmed.isNotEmpty) return trimmed;
+    }
+    return null;
   }
 
   Future<void> _ensureServiceEnabled() async {

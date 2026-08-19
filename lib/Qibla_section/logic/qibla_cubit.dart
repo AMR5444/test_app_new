@@ -27,22 +27,15 @@ class QiblaCubit extends Cubit<QiblaState> {
   StreamSubscription<Position>? _positionSubscription;
   StreamSubscription<HeadingReading>? _headingSubscription;
 
-  bool _isInitializing = false;
+  double? _lastGeocodedLatitude;
+  double? _lastGeocodedLongitude;
+  static const double _geocodeDistanceThresholdMeters = 1000;
 
   Future<void> _init() async {
-    if (_isInitializing) return;
-    _isInitializing = true;
-
-    await _positionSubscription?.cancel();
-    await _headingSubscription?.cancel();
-    _positionSubscription = null;
-    _headingSubscription = null;
-
     emit(state.copyWith(status: QiblaStatus.loading, clearErrorMessage: true));
 
     try {
       final position = await _locationService.getCurrentPosition();
-      if (isClosed) return;
       _applyPosition(position);
 
       _positionSubscription = _locationService.watchPosition().listen(
@@ -58,13 +51,13 @@ class QiblaCubit extends Cubit<QiblaState> {
       _handleError(e);
     } catch (e) {
       _handleError(e);
-    } finally {
-      _isInitializing = false;
     }
   }
 
   void _applyPosition(Position position) {
     if (isClosed) return;
+
+    unawaited(_maybeResolvePlaceName(position));
 
     final bearing = _qiblaService.qiblaBearing(
       position.latitude,
@@ -137,6 +130,40 @@ class QiblaCubit extends Cubit<QiblaState> {
     );
   }
 
+  Future<void> _maybeResolvePlaceName(Position position) async {
+    final hasResolvedBefore =
+        _lastGeocodedLatitude != null && _lastGeocodedLongitude != null;
+
+    if (hasResolvedBefore) {
+      final movedMeters = Geolocator.distanceBetween(
+        _lastGeocodedLatitude!,
+        _lastGeocodedLongitude!,
+        position.latitude,
+        position.longitude,
+      );
+      if (movedMeters < _geocodeDistanceThresholdMeters) return;
+    }
+
+    _lastGeocodedLatitude = position.latitude;
+    _lastGeocodedLongitude = position.longitude;
+
+    final resolvedName = await _locationService.getPlaceName(
+      position.latitude,
+      position.longitude,
+    );
+
+    if (isClosed) return;
+
+    final locationName =
+        resolvedName ??
+        _locationService.formatCoordinatesFallback(
+          position.latitude,
+          position.longitude,
+        );
+
+    emit(state.copyWith(locationName: locationName));
+  }
+
   void _handleError(Object error) {
     if (isClosed) return;
 
@@ -148,6 +175,36 @@ class QiblaCubit extends Cubit<QiblaState> {
   }
 
   Future<void> retry() => _init();
+
+  bool _isPaused = false;
+
+  /// Cancels the live position/heading subscriptions (which in turn lets
+  /// [SensorService] stop the underlying accelerometer/magnetometer
+  /// listeners) without closing the cubit itself. Safe to call repeatedly.
+  void pause() {
+    if (isClosed || _isPaused) return;
+    _isPaused = true;
+    _positionSubscription?.cancel();
+    _headingSubscription?.cancel();
+    _positionSubscription = null;
+    _headingSubscription = null;
+  }
+
+  /// Re-subscribes to position/heading after [pause], reusing the same
+  /// cubit instance and services (no re-initialization, no duplicate
+  /// subscriptions). No-op if never paused or already closed.
+  void resume() {
+    if (isClosed || !_isPaused) return;
+    _isPaused = false;
+    _positionSubscription = _locationService.watchPosition().listen(
+      _applyPosition,
+      onError: _handleError,
+    );
+    _headingSubscription = _sensorService.headingStream().listen(
+      _applyHeading,
+      onError: _handleError,
+    );
+  }
 
   @override
   Future<void> close() async {
