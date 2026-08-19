@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:test_app_new/Qibla_section/presentation/views/qibla_screen.dart';
 import 'package:test_app_new/Quran_Section/views/quran_index_screen.dart';
 import 'package:test_app_new/azkr_section/views/azkarCategori_Screen.dart';
 import 'package:test_app_new/core/settings/logic/settings_cubit.dart';
 import 'package:test_app_new/core/theme/app_theme.dart';
 import 'package:test_app_new/home/views/home_screen.dart';
 import 'package:test_app_new/tasbeeh_section/presentation/view/tasbeeh_screen.dart';
-import 'package:test_app_new/views/qibla_screen.dart';
 import 'package:test_app_new/core/settings/presentation/views/settings_screen.dart';
 
 class MainNavigationScreen extends StatefulWidget {
