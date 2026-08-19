@@ -113,10 +113,10 @@ class SensorService {
     ey /= normE;
     ez /= normE;
 
-    // North vector = gravity x east (only the x-component is needed below).
-    final nx = nay * ez - naz * ey;
+    // North vector = gravity x east (only the y-component is needed below).
+    final ny = naz * ex - nax * ez;
 
-    final heading = math.atan2(ex, nx) * (180 / math.pi);
+    final heading = math.atan2(ey, ny) * (180 / math.pi);
     return _normalizeDegrees(heading);
   }
 

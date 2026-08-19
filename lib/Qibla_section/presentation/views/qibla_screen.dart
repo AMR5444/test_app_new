@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:test_app_new/Qibla_section/logic/qibla_cubit.dart';
@@ -34,8 +35,11 @@ class _QiblaScreenContent extends StatelessWidget {
       backgroundColor: isDark ? AppColors.bgDark : AppColors.bgLight,
       appBar: AppBar(title: const Text('اتجاه القبلة')),
       body: SafeArea(
-        child: BlocBuilder<QiblaCubit, QiblaState>(
+        child: BlocConsumer<QiblaCubit, QiblaState>(
           buildWhen: (previous, current) => previous.status != current.status,
+          listenWhen: (previous, current) =>
+              current.isFacingQibla && !previous.isFacingQibla,
+          listener: (context, state) => HapticFeedback.mediumImpact(),
           builder: (context, state) {
             switch (state.status) {
               case QiblaStatus.initial:

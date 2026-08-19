@@ -107,7 +107,7 @@ class _AnimatedNeedleState extends State<_AnimatedNeedle>
     _turnsAnimation = Tween<double>(
       begin: _committedTurns,
       end: targetTurns,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
 
     _committedTurns = targetTurns;
     _controller
@@ -140,20 +140,66 @@ class _AnimatedNeedleState extends State<_AnimatedNeedle>
     final needleColor = widget.isFacing
         ? AppColors.primary
         : (widget.isDark ? AppColors.textLight : AppColors.textPrimary);
+    final needleLength = widget.size * 0.36;
 
     return AnimatedBuilder(
       animation: _turnsAnimation,
-      builder: (context, child) {
+      builder: (context, _) {
+        final angleRad = _turnsAnimation.value * 2 * math.pi;
         return Transform.rotate(
-          angle: _turnsAnimation.value * 2 * math.pi,
-          child: child,
+          angle: angleRad,
+          child: SizedBox(
+            width: widget.size,
+            height: widget.size,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                CustomPaint(
+                  size: Size(widget.size, widget.size),
+                  painter: _NeedlePainter(color: needleColor),
+                ),
+
+                Transform.translate(
+                  offset: Offset(0, -needleLength - 8),
+                  child: Transform.rotate(
+                    angle: -angleRad,
+                    child: _KaabaBadge(isFacing: widget.isFacing),
+                  ),
+                ),
+              ],
+            ),
+          ),
         );
       },
-      child: SizedBox(
-        width: widget.size,
-        height: widget.size,
-        child: CustomPaint(painter: _NeedlePainter(color: needleColor)),
+    );
+  }
+}
+
+/// Small badge that marks the Kaaba's position at the needle's tip.
+class _KaabaBadge extends StatelessWidget {
+  final bool isFacing;
+
+  const _KaabaBadge({required this.isFacing});
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 220),
+      padding: const EdgeInsets.all(6),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: (isFacing ? AppColors.primary : Colors.black).withValues(
+              alpha: isFacing ? 0.45 : 0.12,
+            ),
+            blurRadius: isFacing ? 18 : 8,
+            spreadRadius: isFacing ? 2 : 0,
+          ),
+        ],
       ),
+      child: const Text('🕋', style: TextStyle(fontSize: 18)),
     );
   }
 }
@@ -174,26 +220,103 @@ class _Dial extends StatelessWidget {
     final ringColor = isFacing
         ? AppColors.primary
         : (isDark ? AppColors.bgCardDark2 : AppColors.accentLight);
+    final labelColor = isDark ? AppColors.textMuted : AppColors.textSecondary;
 
-    return Container(
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: isDark ? AppColors.bgCardDark : AppColors.bgCard,
-        border: Border.all(color: ringColor, width: 3),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.08),
-            blurRadius: 20,
-            spreadRadius: 2,
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        if (isFacing) _GlowPulse(size: size, color: AppColors.primary),
+        Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: isDark ? AppColors.bgCardDark : AppColors.bgCard,
+            border: Border.all(color: ringColor, width: 3),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.08),
+                blurRadius: 20,
+                spreadRadius: 2,
+              ),
+            ],
           ),
-        ],
-      ),
-      child: CustomPaint(
-        size: Size(size, size),
-        painter: _TicksPainter(
-          color: isDark ? AppColors.textMuted : AppColors.textSecondary,
+          child: CustomPaint(
+            size: Size(size, size),
+            painter: _TicksPainter(
+              color: isDark ? AppColors.textMuted : AppColors.textSecondary,
+            ),
+          ),
         ),
-      ),
+        ..._cardinalLabels(size, labelColor),
+      ],
+    );
+  }
+
+  List<Widget> _cardinalLabels(double size, Color color) {
+    const labels = {'N': 0.0, 'E': 90.0, 'S': 180.0, 'W': 270.0};
+    final r = size / 2 - 22;
+    return labels.entries.map((entry) {
+      final rad = entry.value * math.pi / 180;
+      final dx = r * math.sin(rad);
+      final dy = -r * math.cos(rad);
+      return Transform.translate(
+        offset: Offset(dx, dy),
+        child: Text(
+          entry.key,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            color: entry.key == 'N' ? AppColors.primary : color,
+          ),
+        ),
+      );
+    }).toList();
+  }
+}
+
+class _GlowPulse extends StatefulWidget {
+  final double size;
+  final Color color;
+
+  const _GlowPulse({required this.size, required this.color});
+
+  @override
+  State<_GlowPulse> createState() => _GlowPulseState();
+}
+
+class _GlowPulseState extends State<_GlowPulse>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 1100),
+  )..repeat(reverse: true);
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, _) {
+        final t = _controller.value;
+        return Container(
+          width: widget.size,
+          height: widget.size,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: widget.color.withValues(alpha: 0.22 + 0.14 * t),
+                blurRadius: 26 + 20 * t,
+                spreadRadius: 4 + 6 * t,
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
@@ -267,7 +390,8 @@ class _CenterDot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 220),
       width: 14,
       height: 14,
       decoration: BoxDecoration(
