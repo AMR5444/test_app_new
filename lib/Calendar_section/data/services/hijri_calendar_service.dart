@@ -66,7 +66,7 @@ class HijriCalendarService {
   String gregorianMonthName(int gregorianMonth) =>
       _gregorianMonthNames[gregorianMonth - 1];
 
-  String weakDayName(int weakDay) => _weakDaysNames[weakDay % 7];
+  String weekDayName(int weakDay) => _weakDaysNames[weakDay % 7];
 
   String toArabicDigits(Object value) {
     const arabicDigits = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];

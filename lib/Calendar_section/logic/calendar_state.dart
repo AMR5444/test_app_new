@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:test_app_new/Calendar_section/data/models/calendar_day.dart';
+import 'package:test_app_new/Calendar_section/data/models/reminders.dart';
 import 'package:test_app_new/Calendar_section/data/models/upcoming_event.dart';
 
 enum CalendarStatus { initial, loading, success, error }
@@ -11,6 +12,7 @@ class CalendarState extends Equatable {
   final List<List<CalendarDay>> weeks;
   final CalendarDay? selectedDay;
   final UpcomingEvent? nextEvent;
+  final List<Reminder> reminders;
   final String? errorMessage;
 
   const CalendarState({
@@ -20,8 +22,17 @@ class CalendarState extends Equatable {
     this.weeks = const [],
     this.selectedDay,
     this.nextEvent,
+    this.reminders = const [],
     this.errorMessage,
   });
+
+  List<Reminder> get remindersForSelectedDay {
+    final day = selectedDay?.gregorianDate;
+    if (day == null) return const [];
+    return reminders
+        .where((reminder) => reminder.matchesDate(day))
+        .toList(growable: false);
+  }
 
   CalendarState copyWith({
     CalendarStatus? status,
@@ -30,6 +41,7 @@ class CalendarState extends Equatable {
     List<List<CalendarDay>>? weeks,
     CalendarDay? selectedDay,
     UpcomingEvent? nextEvent,
+    List<Reminder>? reminders,
     String? errorMessage,
     bool clearErrorMessage = false,
   }) {
@@ -40,6 +52,7 @@ class CalendarState extends Equatable {
       weeks: weeks ?? this.weeks,
       selectedDay: selectedDay ?? this.selectedDay,
       nextEvent: nextEvent ?? this.nextEvent,
+      reminders: reminders ?? this.reminders,
       errorMessage: clearErrorMessage
           ? null
           : errorMessage ?? this.errorMessage,
@@ -54,6 +67,7 @@ class CalendarState extends Equatable {
     weeks,
     selectedDay,
     nextEvent,
+    reminders,
     errorMessage,
   ];
 }

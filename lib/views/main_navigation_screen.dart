@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:test_app_new/Calendar_section/presentation/views/calendar_screen.dart';
 import 'package:test_app_new/Qibla_section/presentation/views/qibla_screen.dart';
 import 'package:test_app_new/Quran_Section/views/quran_index_screen.dart';
 import 'package:test_app_new/azkr_section/views/azkarCategori_Screen.dart';
@@ -34,6 +35,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           const QuranIndexScreen(),
           const AzkarCategoriesScreen(),
           QiblaScreen(isVisible: _currentIndex == 3),
+          const CalendarScreen(),
           const SettingsScreen(),
           const TasbeehScreen(),
         ];
@@ -67,6 +69,11 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         'icon': Icons.explore_outlined,
         'activeIcon': Icons.explore,
         'label': 'القبلة',
+      },
+      {
+        'icon': Icons.calendar_today_outlined,
+        'activeIcon': Icons.calendar_today,
+        'label': 'التقويم',
       },
       {
         'icon': Icons.settings_outlined,

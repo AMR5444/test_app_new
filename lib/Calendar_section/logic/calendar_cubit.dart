@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_app_new/Calendar_section/data/models/calendar_day.dart';
+import 'package:test_app_new/Calendar_section/data/models/reminders.dart';
 import 'package:test_app_new/Calendar_section/data/models/upcoming_event.dart';
 import 'package:test_app_new/Calendar_section/data/services/hijri_calendar_service.dart';
 import 'package:test_app_new/Calendar_section/data/services/islamic_events_service.dart';
@@ -50,6 +51,37 @@ class CalendarCubit extends Cubit<CalendarState> {
   }
 
   Future<void> retry() => _init();
+
+  void addReminder({
+    required String title,
+    required int hour,
+    required int minute,
+  }) {
+    if (isClosed) return;
+    final day = state.selectedDay?.gregorianDate;
+    if (day == null || title.trim().isEmpty) return;
+
+    final reminder = Reminder(
+      id: DateTime.now().microsecondsSinceEpoch.toString(),
+      title: title.trim(),
+      date: DateTime(day.year, day.month, day.day),
+      hour: hour,
+      minute: minute,
+    );
+
+    emit(state.copyWith(reminders: [...state.reminders, reminder]));
+  }
+
+  void deleteReminder(String id) {
+    if (isClosed) return;
+    emit(
+      state.copyWith(
+        reminders: state.reminders
+            .where((reminder) => reminder.id != id)
+            .toList(),
+      ),
+    );
+  }
 
   void _buildMonth({
     required int year,
