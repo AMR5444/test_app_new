@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:qcf_quran_plus/qcf_quran_plus.dart';
-import 'package:test_app_new/views/main_navigation_screen.dart';
 import 'package:test_app_new/azkr_section/logic/azkar_cubit.dart';
 import 'package:test_app_new/azkr_section/views/azkarCategori_Screen.dart';
 import 'package:test_app_new/core/Notifications/NotificationsService.dart';
 import 'package:test_app_new/core/settings/logic/settings_cubit.dart';
 import 'package:test_app_new/core/theme/app_theme.dart';
+import 'package:test_app_new/views/SplashScreen.dart';
 import 'azkr_section/data/Azkar_API.dart';
 import 'core/Notifications/azkar_scheduler.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -59,7 +59,7 @@ class MyApp extends StatelessWidget {
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-            home: const MainNavigationScreen(),
+            home: const SplashScreen(),
             routes: {
               '/azkar': (context) {
                 final category =
