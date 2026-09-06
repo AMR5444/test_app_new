@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Matches AppColors.bgLight / lib/views/SplashScreen.dart's background,
+         used by the native splash so there's no color mismatch or flash. -->
+    <color name="splash_background">#FFF7F5F0</color>
+</resources>

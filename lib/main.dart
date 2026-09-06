@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -22,21 +24,30 @@ Future requestNotificationPermission() async {
   }
 }
 
+const _requiredHiveBoxes = [
+  'favoritesBox',
+  'tafsirBox',
+  'lastPositionBox',
+  'bookmarksBox',
+  'notesBox',
+];
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Hive.initFlutter();
 
-  await Hive.openBox('favoritesBox');
-  await Hive.openBox('tafsirBox');
-  await Hive.openBox('lastPositionBox');
-  await Hive.openBox('bookmarksBox');
-  await Hive.openBox('notesBox');
+  await Future.wait(_requiredHiveBoxes.map(Hive.openBox));
 
-  await requestNotificationPermission();
-  await scheduleDailyAzkar();
-  await QcfFontLoader.setupFontsAtStartup(onProgress: (double progress) {});
   runApp(const MyApp());
+
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    unawaited(requestNotificationPermission());
+    unawaited(scheduleDailyAzkar());
+    unawaited(
+      QcfFontLoader.setupFontsAtStartup(onProgress: (double progress) {}),
+    );
+  });
 }
 
 class MyApp extends StatelessWidget {
