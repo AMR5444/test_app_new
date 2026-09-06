@@ -51,7 +51,7 @@ class LastReadCard extends StatelessWidget {
                 children: [
                   Text(
                     'متابعة القراءة',
-                    style: GoogleFonts.cairo(
+                    style: GoogleFonts.ibmPlexSansArabic(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
                       color: AppColors.primary,
@@ -61,7 +61,7 @@ class LastReadCard extends StatelessWidget {
                     lastSurah != null
                         ? '${lastSurah!.name} • صفحة ${lastPosition!.pageIndex + 1}'
                         : 'سورة ${lastPosition!.surahNumber} • صفحة ${lastPosition!.pageIndex + 1}',
-                    style: GoogleFonts.cairo(
+                    style: GoogleFonts.ibmPlexSansArabic(
                       fontSize: 12,
                       color: AppColors.textSecondary,
                     ),
@@ -79,7 +79,7 @@ class LastReadCard extends StatelessWidget {
                 child: Center(
                   child: Text(
                     _toArabicNumbers(lastPosition!.surahNumber.toString()),
-                    style: GoogleFonts.cairo(
+                    style: GoogleFonts.ibmPlexSansArabic(
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,

@@ -150,7 +150,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
       child: Text(
         'القرآن الكريم',
-        style: GoogleFonts.cairo(
+        style: GoogleFonts.ibmPlexSansArabic(
           fontSize: 22,
           fontWeight: FontWeight.bold,
           color: isDark ? AppColors.textLight : AppColors.textPrimary,
@@ -209,7 +209,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
                 const SizedBox(width: 4),
                 Text(
                   pageLabel,
-                  style: GoogleFonts.cairo(fontSize: 12, color: Colors.white70),
+                  style: GoogleFonts.ibmPlexSansArabic(fontSize: 12, color: Colors.white70),
                 ),
               ],
             ),
@@ -218,7 +218,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
               children: [
                 Text(
                   'متابعة القراءة',
-                  style: GoogleFonts.cairo(
+                  style: GoogleFonts.ibmPlexSansArabic(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -258,14 +258,14 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
           controller: _searchController,
           onChanged: _filterSurahs,
           textDirection: TextDirection.rtl,
-          style: GoogleFonts.cairo(
+          style: GoogleFonts.ibmPlexSansArabic(
             fontSize: 14,
             color: isDark ? AppColors.textLight : AppColors.textPrimary,
           ),
           decoration: InputDecoration(
             hintText: 'ابحث عن سورة...',
             hintTextDirection: TextDirection.rtl,
-            hintStyle: GoogleFonts.cairo(
+            hintStyle: GoogleFonts.ibmPlexSansArabic(
               fontSize: 14,
               color: AppColors.textMuted,
             ),
@@ -306,11 +306,11 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
         controller: _tabController,
         isScrollable: true,
         tabAlignment: TabAlignment.start,
-        labelStyle: GoogleFonts.cairo(
+        labelStyle: GoogleFonts.ibmPlexSansArabic(
           fontSize: 13,
           fontWeight: FontWeight.bold,
         ),
-        unselectedLabelStyle: GoogleFonts.cairo(fontSize: 13),
+        unselectedLabelStyle: GoogleFonts.ibmPlexSansArabic(fontSize: 13),
         labelColor: AppColors.primary,
         unselectedLabelColor: AppColors.textSecondary,
         indicatorColor: AppColors.primary,
@@ -371,7 +371,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
             const SizedBox(height: 12),
             Text(
               'لا توجد نتائج لـ "${_searchController.text}"',
-              style: GoogleFonts.cairo(
+              style: GoogleFonts.ibmPlexSansArabic(
                 fontSize: 15,
                 color: AppColors.textSecondary,
               ),
@@ -399,7 +399,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
           const SizedBox(height: 16),
           Text(
             'تعذر الاتصال',
-            style: GoogleFonts.cairo(
+            style: GoogleFonts.ibmPlexSansArabic(
               fontSize: 18,
               fontWeight: FontWeight.bold,
               color: isDark ? AppColors.textLight : AppColors.textPrimary,
@@ -408,7 +408,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
           const SizedBox(height: 8),
           Text(
             'تأكد من اتصالك بالإنترنت',
-            style: GoogleFonts.cairo(color: AppColors.textSecondary),
+            style: GoogleFonts.ibmPlexSansArabic(color: AppColors.textSecondary),
           ),
           const SizedBox(height: 20),
           ElevatedButton(
@@ -420,7 +420,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            child: Text('إعادة المحاولة', style: GoogleFonts.cairo()),
+            child: Text('إعادة المحاولة', style: GoogleFonts.ibmPlexSansArabic()),
           ),
         ],
       ),
@@ -452,7 +452,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
                 children: [
                   Text(
                     surah.englishName,
-                    style: GoogleFonts.cairo(
+                    style: GoogleFonts.ibmPlexSansArabic(
                       fontSize: 13,
                       color: AppColors.textSecondary,
                     ),
@@ -460,7 +460,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
                   Text(
                     '${surah.numberOfAyahs} آية • '
                     '${surah.revelationType == 'Meccan' ? 'مكية' : 'مدنية'}',
-                    style: GoogleFonts.cairo(
+                    style: GoogleFonts.ibmPlexSansArabic(
                       fontSize: 11,
                       color: AppColors.textMuted,
                     ),
@@ -473,7 +473,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
                 padding: const EdgeInsets.only(left: 8),
                 child: Text(
                   'آخر قراءة',
-                  style: GoogleFonts.cairo(
+                  style: GoogleFonts.ibmPlexSansArabic(
                     fontSize: 10,
                     color: AppColors.primary,
                     fontWeight: FontWeight.w600,
@@ -522,7 +522,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
       child: Center(
         child: Text(
           '$number',
-          style: GoogleFonts.cairo(
+          style: GoogleFonts.ibmPlexSansArabic(
             fontSize: 11,
             fontWeight: FontWeight.bold,
             color: isDark ? AppColors.accent : AppColors.primary,
@@ -553,7 +553,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
           const SizedBox(height: 16),
           Text(
             'لا يوجد عناصر بعد',
-            style: GoogleFonts.cairo(
+            style: GoogleFonts.ibmPlexSansArabic(
               fontSize: 16,
               fontWeight: FontWeight.bold,
               color: isDark ? AppColors.textLight : AppColors.textPrimary,
@@ -562,7 +562,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
           const SizedBox(height: 8),
           Text(
             subtitle,
-            style: GoogleFonts.cairo(
+            style: GoogleFonts.ibmPlexSansArabic(
               fontSize: 13,
               color: AppColors.textSecondary,
             ),
@@ -609,7 +609,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
                   SnackBar(
                     content: Text(
                       'تم حذف الآية من المفضلة',
-                      style: GoogleFonts.cairo(),
+                      style: GoogleFonts.ibmPlexSansArabic(),
                     ),
                     backgroundColor: AppColors.primary,
                   ),
@@ -677,7 +677,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
                   SnackBar(
                     content: Text(
                       'تم حذف الإشارة المرجعية',
-                      style: GoogleFonts.cairo(),
+                      style: GoogleFonts.ibmPlexSansArabic(),
                     ),
                     backgroundColor: AppColors.primary,
                   ),
@@ -744,14 +744,14 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
                   "${note.ayahText.substring(0, note.ayahText.length > 50 ? 50 : note.ayahText.length)}... ﴿${note.ayahNumber}﴾",
                   textAlign: TextAlign.right,
                   textDirection: TextDirection.rtl,
-                  style: GoogleFonts.cairo(fontSize: 13),
+                  style: GoogleFonts.ibmPlexSansArabic(fontSize: 13),
                 ),
                 subtitle: Text(
                   note.updatedAt != null
                       ? 'آخر تحديث: ${_formatDate(note.updatedAt!)}'
                       : 'تم الإضافة: ${_formatDate(note.createdAt)}',
                   textAlign: TextAlign.right,
-                  style: GoogleFonts.cairo(
+                  style: GoogleFonts.ibmPlexSansArabic(
                     fontSize: 11,
                     color: AppColors.textSecondary,
                   ),
@@ -766,7 +766,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
                           note.noteText,
                           textAlign: TextAlign.right,
                           textDirection: TextDirection.rtl,
-                          style: GoogleFonts.cairo(fontSize: 14),
+                          style: GoogleFonts.ibmPlexSansArabic(fontSize: 14),
                         ),
                         const SizedBox(height: 12),
                         Row(
@@ -784,7 +784,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
                               ),
                               label: Text(
                                 'حذف',
-                                style: GoogleFonts.cairo(
+                                style: GoogleFonts.ibmPlexSansArabic(
                                   color: Colors.red,
                                   fontSize: 12,
                                 ),
@@ -805,7 +805,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
                               icon: const Icon(Icons.arrow_back, size: 14),
                               label: Text(
                                 'الذهاب للآية',
-                                style: GoogleFonts.cairo(fontSize: 12),
+                                style: GoogleFonts.ibmPlexSansArabic(fontSize: 12),
                               ),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.primary,
@@ -864,7 +864,7 @@ class _QuranIndexScreenState extends State<QuranIndexScreen>
               const SizedBox(height: 6),
               Text(
                 subtitle,
-                style: GoogleFonts.cairo(
+                style: GoogleFonts.ibmPlexSansArabic(
                   fontSize: 11,
                   color: AppColors.textSecondary,
                 ),

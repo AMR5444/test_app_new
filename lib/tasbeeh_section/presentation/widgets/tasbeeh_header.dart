@@ -23,7 +23,7 @@ class TasbeehHeader extends StatelessWidget {
               Text(
                 zekr.zekr,
                 textAlign: TextAlign.center,
-                style: GoogleFonts.cairo(
+                style: GoogleFonts.ibmPlexSansArabic(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
                   color: isDark ? AppColors.textLight : AppColors.textPrimary,
@@ -33,7 +33,7 @@ class TasbeehHeader extends StatelessWidget {
               Text(
                 zekr.description,
                 textAlign: TextAlign.center,
-                style: GoogleFonts.cairo(
+                style: GoogleFonts.ibmPlexSansArabic(
                   fontSize: 13,
                   color: AppColors.textSecondary,
                 ),
@@ -69,7 +69,7 @@ class TasbeehHeader extends StatelessWidget {
                 ListTile(
                   title: Text(
                     state.azkarList[i].zekr,
-                    style: GoogleFonts.cairo(
+                    style: GoogleFonts.ibmPlexSansArabic(
                       fontWeight: i == state.selectedIndex
                           ? FontWeight.bold
                           : FontWeight.normal,
@@ -80,7 +80,7 @@ class TasbeehHeader extends StatelessWidget {
                   ),
                   subtitle: Text(
                     state.azkarList[i].description,
-                    style: GoogleFonts.cairo(
+                    style: GoogleFonts.ibmPlexSansArabic(
                       fontSize: 12,
                       color: AppColors.textSecondary,
                     ),

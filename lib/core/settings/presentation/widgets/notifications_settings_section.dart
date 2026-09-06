@@ -153,7 +153,7 @@ class NotificationsSettingsSection extends StatelessWidget {
           children: [
             Text(
               title,
-              style: GoogleFonts.cairo(
+              style: GoogleFonts.ibmPlexSansArabic(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: isDark ? AppColors.textLight : AppColors.textPrimary,
@@ -184,7 +184,7 @@ class NotificationsSettingsSection extends StatelessWidget {
                         title: Text(
                           voice.name,
                           textDirection: TextDirection.rtl,
-                          style: GoogleFonts.cairo(
+                          style: GoogleFonts.ibmPlexSansArabic(
                             color: isDark
                                 ? AppColors.textLight
                                 : AppColors.textPrimary,
@@ -252,7 +252,7 @@ class _ReminderMinutesTile extends StatelessWidget {
             children: [
               Text(
                 'وقت التذكير',
-                style: GoogleFonts.cairo(
+                style: GoogleFonts.ibmPlexSansArabic(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
                   color: isDark ? AppColors.textLight : AppColors.textPrimary,
@@ -260,7 +260,7 @@ class _ReminderMinutesTile extends StatelessWidget {
               ),
               Text(
                 'قبل موعد الأذان',
-                style: GoogleFonts.cairo(
+                style: GoogleFonts.ibmPlexSansArabic(
                   fontSize: 12,
                   color: AppColors.textSecondary,
                 ),

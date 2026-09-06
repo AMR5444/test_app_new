@@ -136,7 +136,7 @@ class _QiblaContent extends StatelessWidget {
               Text(
                 'أدر جهازك حتى تشير الإبرة إلى الكعبة',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.cairo(
+                style: GoogleFonts.ibmPlexSansArabic(
                   fontSize: 13,
                   color: isDark ? AppColors.textMuted : AppColors.textSecondary,
                 ),

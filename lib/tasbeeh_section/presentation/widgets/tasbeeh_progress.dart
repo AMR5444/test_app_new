@@ -30,7 +30,7 @@ class TasbeehProgress extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               '${state.count} / ${state.target}',
-              style: GoogleFonts.cairo(
+              style: GoogleFonts.ibmPlexSansArabic(
                 fontSize: 14,
                 color: AppColors.textSecondary,
               ),

@@ -40,12 +40,12 @@ class TasbeehActions extends StatelessWidget {
       builder: (dialogContext) {
         return AlertDialog(
           backgroundColor: isDark ? AppColors.bgCardDark : AppColors.bgCard,
-          title: Text('تغيير الهدف', style: GoogleFonts.cairo()),
+          title: Text('تغيير الهدف', style: GoogleFonts.ibmPlexSansArabic()),
           content: TextField(
             controller: controller,
             keyboardType: TextInputType.number,
             autofocus: true,
-            style: GoogleFonts.cairo(
+            style: GoogleFonts.ibmPlexSansArabic(
               color: isDark ? AppColors.textLight : AppColors.textPrimary,
             ),
             decoration: const InputDecoration(hintText: 'العدد المستهدف'),
@@ -53,7 +53,7 @@ class TasbeehActions extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(),
-              child: Text('إلغاء', style: GoogleFonts.cairo()),
+              child: Text('إلغاء', style: GoogleFonts.ibmPlexSansArabic()),
             ),
             TextButton(
               onPressed: () {
@@ -65,7 +65,7 @@ class TasbeehActions extends StatelessWidget {
               },
               child: Text(
                 'حفظ',
-                style: GoogleFonts.cairo(color: AppColors.primary),
+                style: GoogleFonts.ibmPlexSansArabic(color: AppColors.primary),
               ),
             ),
           ],
@@ -106,7 +106,7 @@ class _ActionButton extends StatelessWidget {
             const SizedBox(width: 6),
             Text(
               label,
-              style: GoogleFonts.cairo(
+              style: GoogleFonts.ibmPlexSansArabic(
                 fontSize: 13,
                 color: isDark ? AppColors.textLight : AppColors.textPrimary,
               ),

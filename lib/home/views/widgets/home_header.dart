@@ -42,7 +42,7 @@ class HomeHeader extends StatelessWidget {
             children: [
               Text(
                 'السلام عليكم',
-                style: GoogleFonts.cairo(
+                style: GoogleFonts.ibmPlexSansArabic(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
                   color: isDark ? AppColors.textLight : AppColors.textPrimary,
@@ -77,7 +77,7 @@ class _DateInfo extends StatelessWidget {
           children: [
             Text(
               state.dateHeader,
-              style: GoogleFonts.cairo(
+              style: GoogleFonts.ibmPlexSansArabic(
                 fontSize: 13,
                 color: isDark ? AppColors.textLight : AppColors.textPrimary,
                 fontWeight: FontWeight.w600,
@@ -85,7 +85,7 @@ class _DateInfo extends StatelessWidget {
             ),
             Text(
               state.hijriDate,
-              style: GoogleFonts.cairo(
+              style: GoogleFonts.ibmPlexSansArabic(
                 fontSize: 12,
                 color: AppColors.textSecondary,
               ),
@@ -110,7 +110,7 @@ class _CurrentTimeText extends StatelessWidget {
       builder: (context, state) {
         return Text(
           state.currentTime,
-          style: GoogleFonts.cairo(
+          style: GoogleFonts.ibmPlexSansArabic(
             fontSize: 14,
             fontWeight: FontWeight.w600,
             color: isDark ? AppColors.textLight : AppColors.textPrimary,

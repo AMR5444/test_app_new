@@ -65,7 +65,7 @@ class AzkarCategoriesScreen extends StatelessWidget {
                     children: [
                       Text(
                         'الأذكار',
-                        style: GoogleFonts.cairo(
+                        style: GoogleFonts.ibmPlexSansArabic(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
                           color: isDark
@@ -75,7 +75,7 @@ class AzkarCategoriesScreen extends StatelessWidget {
                       ),
                       Text(
                         'حصن المسلم اليومي',
-                        style: GoogleFonts.cairo(
+                        style: GoogleFonts.ibmPlexSansArabic(
                           fontSize: 13,
                           color: AppColors.textSecondary,
                         ),
@@ -153,7 +153,7 @@ class AzkarCategoriesScreen extends StatelessWidget {
             const SizedBox(width: 4),
             Text(
               '$count',
-              style: GoogleFonts.cairo(
+              style: GoogleFonts.ibmPlexSansArabic(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: AppColors.textSecondary,
@@ -166,7 +166,7 @@ class AzkarCategoriesScreen extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: GoogleFonts.cairo(
+                    style: GoogleFonts.ibmPlexSansArabic(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: isDark
@@ -177,7 +177,7 @@ class AzkarCategoriesScreen extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: GoogleFonts.cairo(
+                    style: GoogleFonts.ibmPlexSansArabic(
                       fontSize: 12,
                       color: AppColors.textSecondary,
                     ),

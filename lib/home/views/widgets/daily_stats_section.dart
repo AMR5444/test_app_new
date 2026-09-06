@@ -28,7 +28,7 @@ class DailyStatsSection extends StatelessWidget {
         children: [
           Text(
             'إنجازاتك اليومية',
-            style: GoogleFonts.cairo(
+            style: GoogleFonts.ibmPlexSansArabic(
               fontSize: 16,
               fontWeight: FontWeight.bold,
               color: isDark ? AppColors.textLight : AppColors.textPrimary,

@@ -31,7 +31,7 @@ class QiblaLocationHeader extends StatelessWidget {
           children: [
             Text(
               'موقعك الحالي',
-              style: GoogleFonts.cairo(
+              style: GoogleFonts.ibmPlexSansArabic(
                 fontSize: 12,
                 color: isDark ? AppColors.textMuted : AppColors.textSecondary,
               ),
@@ -40,7 +40,7 @@ class QiblaLocationHeader extends StatelessWidget {
             Text(
               displayValue,
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(
+              style: GoogleFonts.ibmPlexSansArabic(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
                 color: isDark ? AppColors.textLight : AppColors.textPrimary,

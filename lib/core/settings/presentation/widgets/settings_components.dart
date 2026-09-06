@@ -12,7 +12,7 @@ class SettingsSectionHeader extends StatelessWidget {
     padding: const EdgeInsets.fromLTRB(16, 16, 20, 8),
     child: Text(
       title,
-      style: GoogleFonts.cairo(
+      style: GoogleFonts.ibmPlexSansArabic(
         fontSize: 13,
         fontWeight: FontWeight.w600,
         color: AppColors.textSecondary,
@@ -89,7 +89,7 @@ class SettingsToggleTile extends StatelessWidget {
           children: [
             Text(
               title,
-              style: GoogleFonts.cairo(
+              style: GoogleFonts.ibmPlexSansArabic(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
                 color: isDark ? AppColors.textLight : AppColors.textPrimary,
@@ -97,7 +97,7 @@ class SettingsToggleTile extends StatelessWidget {
             ),
             Text(
               subtitle,
-              style: GoogleFonts.cairo(fontSize: 12, color: AppColors.textSecondary),
+              style: GoogleFonts.ibmPlexSansArabic(fontSize: 12, color: AppColors.textSecondary),
             ),
           ],
         ),
@@ -138,7 +138,7 @@ class SettingsNavigationTile extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: GoogleFonts.cairo(
+                style: GoogleFonts.ibmPlexSansArabic(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
                   color: isDark ? AppColors.textLight : AppColors.textPrimary,
@@ -146,7 +146,7 @@ class SettingsNavigationTile extends StatelessWidget {
               ),
               Text(
                 subtitle,
-                style: GoogleFonts.cairo(fontSize: 12, color: AppColors.textSecondary),
+                style: GoogleFonts.ibmPlexSansArabic(fontSize: 12, color: AppColors.textSecondary),
               ),
             ],
           ),

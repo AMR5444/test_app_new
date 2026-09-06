@@ -50,7 +50,7 @@ class DailyAyahCard extends StatelessWidget {
                     const SizedBox(width: 4),
                     Text(
                       'مشاركة',
-                      style: GoogleFonts.cairo(
+                      style: GoogleFonts.ibmPlexSansArabic(
                         fontSize: 13,
                         color: AppColors.textSecondary,
                       ),
@@ -60,7 +60,7 @@ class DailyAyahCard extends StatelessWidget {
               ),
               Text(
                 'آية اليوم',
-                style: GoogleFonts.cairo(
+                style: GoogleFonts.ibmPlexSansArabic(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: isDark ? AppColors.textLight : AppColors.textPrimary,
@@ -98,7 +98,7 @@ class DailyAyahCard extends StatelessWidget {
                 const SizedBox(height: 12),
                 Text(
                   '— $source —',
-                  style: GoogleFonts.cairo(
+                  style: GoogleFonts.ibmPlexSansArabic(
                     fontSize: 12,
                     color: AppColors.textSecondary,
                   ),

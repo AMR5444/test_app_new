@@ -54,7 +54,7 @@ class PrayerTimesCard extends StatelessWidget {
                   children: [
                     Text(
                       location.isEmpty ? 'مواقيت الصلاة' : location,
-                      style: GoogleFonts.cairo(
+                      style: GoogleFonts.ibmPlexSansArabic(
                         fontSize: 13,
                         color: Colors.white70,
                       ),
@@ -72,7 +72,7 @@ class PrayerTimesCard extends StatelessWidget {
                       opacity: hasData ? 1.0 : 0.0,
                       child: Text(
                         'الصلاة القادمة • ${nextPrayer.isEmpty ? '' : nextPrayer}',
-                        style: GoogleFonts.cairo(
+                        style: GoogleFonts.ibmPlexSansArabic(
                           fontSize: 12,
                           color: Colors.white70,
                         ),
@@ -82,7 +82,7 @@ class PrayerTimesCard extends StatelessWidget {
                       opacity: hasData ? 1.0 : 0.0,
                       child: Text(
                         nextPrayerTime.isEmpty ? '' : nextPrayerTime,
-                        style: GoogleFonts.cairo(
+                        style: GoogleFonts.ibmPlexSansArabic(
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -116,7 +116,7 @@ class PrayerTimesCard extends StatelessWidget {
                           children: [
                             Text(
                               name,
-                              style: GoogleFonts.cairo(
+                              style: GoogleFonts.ibmPlexSansArabic(
                                 fontSize: 10,
                                 color: isNext
                                     ? AppColors.primary
@@ -130,7 +130,7 @@ class PrayerTimesCard extends StatelessWidget {
                               opacity: hasData ? 1.0 : 0.0,
                               child: Text(
                                 prayerTimes[name] ?? '',
-                                style: GoogleFonts.cairo(
+                                style: GoogleFonts.ibmPlexSansArabic(
                                   fontSize: 9,
                                   color: isNext
                                       ? AppColors.primary
@@ -168,7 +168,7 @@ class _StatusText extends StatelessWidget {
     if (errorMessage != null || showLoading) {
       return Text(
         errorMessage ?? 'جارٍ تحميل مواقيت الصلاة...',
-        style: GoogleFonts.cairo(fontSize: 12, color: Colors.white60),
+        style: GoogleFonts.ibmPlexSansArabic(fontSize: 12, color: Colors.white60),
       );
     }
 
@@ -177,7 +177,7 @@ class _StatusText extends StatelessWidget {
       builder: (context, countdown) {
         return Text(
           'متبقي ${countdown.isEmpty ? '' : countdown}',
-          style: GoogleFonts.cairo(fontSize: 12, color: Colors.white60),
+          style: GoogleFonts.ibmPlexSansArabic(fontSize: 12, color: Colors.white60),
         );
       },
     );

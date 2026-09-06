@@ -26,7 +26,7 @@ class SettingsScreen extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
                 child: Text(
                   'الإعدادات',
-                  style: GoogleFonts.cairo(
+                  style: GoogleFonts.ibmPlexSansArabic(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                     color: isDark ? AppColors.textLight : AppColors.textPrimary,
@@ -58,7 +58,7 @@ class SettingsScreen extends StatelessWidget {
                     leading: const Icon(Icons.bug_report, color: Colors.orange),
                     title: Text(
                       'اختبار الأذان (مؤقت)',
-                      style: GoogleFonts.cairo(
+                      style: GoogleFonts.ibmPlexSansArabic(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
                         color: isDark
@@ -68,7 +68,7 @@ class SettingsScreen extends StatelessWidget {
                     ),
                     subtitle: Text(
                       'شاشة اختبار مؤقتة للأذان والإقامة',
-                      style: GoogleFonts.cairo(
+                      style: GoogleFonts.ibmPlexSansArabic(
                         fontSize: 12,
                         color: AppColors.textSecondary,
                       ),
@@ -87,7 +87,7 @@ class SettingsScreen extends StatelessWidget {
               Center(
                 child: Text(
                   'نور • الإصدار ١.٠',
-                  style: GoogleFonts.cairo(
+                  style: GoogleFonts.ibmPlexSansArabic(
                     fontSize: 12,
                     color: AppColors.textMuted,
                   ),

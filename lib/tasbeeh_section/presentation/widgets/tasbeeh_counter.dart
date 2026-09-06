@@ -44,7 +44,7 @@ class TasbeehCounter extends StatelessWidget {
             child: Center(
               child: Text(
                 '${state.count}',
-                style: GoogleFonts.cairo(
+                style: GoogleFonts.ibmPlexSansArabic(
                   fontSize: 56,
                   fontWeight: FontWeight.bold,
                   color: reached

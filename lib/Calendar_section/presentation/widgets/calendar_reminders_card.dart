@@ -34,7 +34,7 @@ class CalendarRemindersCard extends StatelessWidget {
                     child: Text(
                       'تذكير',
                       textAlign: TextAlign.right,
-                      style: GoogleFonts.cairo(
+                      style: GoogleFonts.ibmPlexSansArabic(
                         fontSize: 15,
                         fontWeight: FontWeight.w800,
                         color: titleColor,
@@ -62,7 +62,7 @@ class CalendarRemindersCard extends StatelessWidget {
                     ? 'لا توجد تذكيرات لهذا اليوم'
                     : '${reminders.length} تذكير اليوم',
                 textAlign: TextAlign.right,
-                style: GoogleFonts.cairo(fontSize: 12, color: mutedColor),
+                style: GoogleFonts.ibmPlexSansArabic(fontSize: 12, color: mutedColor),
               ),
               if (reminders.isNotEmpty) ...[
                 const SizedBox(height: 10),
@@ -91,7 +91,7 @@ class CalendarRemindersCard extends StatelessWidget {
                           child: Text(
                             reminder.title,
                             textAlign: TextAlign.right,
-                            style: GoogleFonts.cairo(
+                            style: GoogleFonts.ibmPlexSansArabic(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
                               color: titleColor,
@@ -101,7 +101,7 @@ class CalendarRemindersCard extends StatelessWidget {
                         const SizedBox(width: 6),
                         Text(
                           reminder.formattedTime,
-                          style: GoogleFonts.cairo(
+                          style: GoogleFonts.ibmPlexSansArabic(
                             fontSize: 11,
                             color: mutedColor,
                           ),
@@ -212,7 +212,7 @@ class _AddReminderSheetState extends State<_AddReminderSheet> {
             Text(
               'إضافة تذكير',
               textAlign: TextAlign.right,
-              style: GoogleFonts.cairo(
+              style: GoogleFonts.ibmPlexSansArabic(
                 fontSize: 16,
                 fontWeight: FontWeight.w800,
                 color: titleColor,
@@ -222,10 +222,10 @@ class _AddReminderSheetState extends State<_AddReminderSheet> {
             TextField(
               controller: _titleController,
               textAlign: TextAlign.right,
-              style: GoogleFonts.cairo(color: titleColor),
+              style: GoogleFonts.ibmPlexSansArabic(color: titleColor),
               decoration: InputDecoration(
                 hintText: 'عنوان التذكير',
-                hintStyle: GoogleFonts.cairo(color: mutedColor),
+                hintStyle: GoogleFonts.ibmPlexSansArabic(color: mutedColor),
                 filled: true,
                 fillColor: isDark ? AppColors.bgCardDark2 : AppColors.bgLight,
                 border: OutlineInputBorder(
@@ -265,10 +265,10 @@ class _AddReminderSheetState extends State<_AddReminderSheet> {
                     const SizedBox(width: 8),
                     Text(
                       _pickedTime.format(context),
-                      style: GoogleFonts.cairo(color: titleColor),
+                      style: GoogleFonts.ibmPlexSansArabic(color: titleColor),
                     ),
                     const Spacer(),
-                    Text('الوقت', style: GoogleFonts.cairo(color: mutedColor)),
+                    Text('الوقت', style: GoogleFonts.ibmPlexSansArabic(color: mutedColor)),
                   ],
                 ),
               ),

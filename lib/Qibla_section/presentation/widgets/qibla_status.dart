@@ -41,7 +41,7 @@ class QiblaStatusBadge extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 isFacing ? 'أنت متجه نحو القبلة' : 'استدر نحو القبلة',
-                style: GoogleFonts.cairo(
+                style: GoogleFonts.ibmPlexSansArabic(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: color,

@@ -101,7 +101,7 @@ class _PrayerAudioTestScreenState extends State<PrayerAudioTestScreen> {
         centerTitle: true,
         title: Text(
           'اختبار الأذان والإقامة',
-          style: GoogleFonts.cairo(
+          style: GoogleFonts.ibmPlexSansArabic(
             fontSize: 18,
             fontWeight: FontWeight.bold,
             color: isDark ? AppColors.textLight : AppColors.textPrimary,
@@ -165,7 +165,7 @@ class _PrayerAudioTestScreenState extends State<PrayerAudioTestScreen> {
                 child: Text(
                   _status,
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(
+                  style: GoogleFonts.ibmPlexSansArabic(
                     fontSize: 14,
                     color: AppColors.textSecondary,
                   ),
@@ -182,7 +182,7 @@ class _PrayerAudioTestScreenState extends State<PrayerAudioTestScreen> {
               child: Text(
                 ' جررررب الاذان من هنا يا علي يا سيد يا بدوي ',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.cairo(
+                style: GoogleFonts.ibmPlexSansArabic(
                   fontSize: 13,
                   color: Colors.orange[800],
                 ),
@@ -225,7 +225,7 @@ class _InfoCard extends StatelessWidget {
         children: [
           Text(
             value,
-            style: GoogleFonts.cairo(
+            style: GoogleFonts.ibmPlexSansArabic(
               fontSize: 14,
               fontWeight: FontWeight.w600,
               color: isDark ? AppColors.textLight : AppColors.textPrimary,
@@ -234,7 +234,7 @@ class _InfoCard extends StatelessWidget {
           const Spacer(),
           Text(
             label,
-            style: GoogleFonts.cairo(
+            style: GoogleFonts.ibmPlexSansArabic(
               fontSize: 12,
               color: AppColors.textSecondary,
             ),
@@ -281,14 +281,14 @@ class _TestButton extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: GoogleFonts.cairo(
+                  style: GoogleFonts.ibmPlexSansArabic(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
                   sublabel,
-                  style: GoogleFonts.cairo(fontSize: 11, color: Colors.white70),
+                  style: GoogleFonts.ibmPlexSansArabic(fontSize: 11, color: Colors.white70),
                 ),
               ],
             ),

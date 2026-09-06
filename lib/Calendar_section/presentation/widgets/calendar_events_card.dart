@@ -36,7 +36,7 @@ class CalendarEventsCard extends StatelessWidget {
                     child: Text(
                       'المناسبات',
                       textAlign: TextAlign.right,
-                      style: GoogleFonts.cairo(
+                      style: GoogleFonts.ibmPlexSansArabic(
                         fontSize: 15,
                         fontWeight: FontWeight.w800,
                         color: titleColor,
@@ -64,7 +64,7 @@ class CalendarEventsCard extends StatelessWidget {
                     ? 'لا توجد مناسبات لهذا اليوم'
                     : '${events.length} مناسبة اليوم',
                 textAlign: TextAlign.right,
-                style: GoogleFonts.cairo(fontSize: 12, color: mutedColor),
+                style: GoogleFonts.ibmPlexSansArabic(fontSize: 12, color: mutedColor),
               ),
               if (events.isNotEmpty) ...[
                 const SizedBox(height: 10),
@@ -79,7 +79,7 @@ class CalendarEventsCard extends StatelessWidget {
                           child: Text(
                             event.title,
                             textAlign: TextAlign.right,
-                            style: GoogleFonts.cairo(
+                            style: GoogleFonts.ibmPlexSansArabic(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
                               color: titleColor,

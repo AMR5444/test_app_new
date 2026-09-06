@@ -30,7 +30,7 @@ class QiblaLocationLabel extends StatelessWidget {
                 children: [
                   Text(
                     'موقعك الحالي',
-                    style: GoogleFonts.cairo(
+                    style: GoogleFonts.ibmPlexSansArabic(
                       fontSize: 11,
                       color: isDark
                           ? AppColors.textMuted
@@ -40,7 +40,7 @@ class QiblaLocationLabel extends StatelessWidget {
                   Text(
                     locationName ?? '...',
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.cairo(
+                    style: GoogleFonts.ibmPlexSansArabic(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: isDark

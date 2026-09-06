@@ -86,7 +86,7 @@ class _InfoItem extends StatelessWidget {
       children: [
         Text(
           value,
-          style: GoogleFonts.cairo(
+          style: GoogleFonts.ibmPlexSansArabic(
             fontSize: 18,
             fontWeight: FontWeight.bold,
             color: isDark ? AppColors.textLight : AppColors.textPrimary,
@@ -95,7 +95,7 @@ class _InfoItem extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           label,
-          style: GoogleFonts.cairo(
+          style: GoogleFonts.ibmPlexSansArabic(
             fontSize: 12,
             color: isDark ? AppColors.textMuted : AppColors.textSecondary,
           ),

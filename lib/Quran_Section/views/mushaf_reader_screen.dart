@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:test_app_new/Quran_Section/data/quran_api_service.dart';
 import 'package:test_app_new/Quran_Section/models/ayah_model.dart';
 import 'package:test_app_new/core/theme/app_theme.dart';
@@ -37,8 +38,7 @@ class _MushafReaderScreenState extends State<MushafReaderScreen> {
       appBar: AppBar(
         title: Text(
           widget.surahName,
-          style: TextStyle(
-            fontFamily: 'Cairo',
+          style: GoogleFonts.ibmPlexSansArabic(
             fontSize: 20,
             fontWeight: FontWeight.w700,
             color: textColor,

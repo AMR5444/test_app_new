@@ -81,7 +81,7 @@ class _AzkarScreenContent extends StatelessWidget {
                   const Spacer(),
                   Text(
                     title,
-                    style: GoogleFonts.cairo(
+                    style: GoogleFonts.ibmPlexSansArabic(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: isDark
@@ -100,14 +100,14 @@ class _AzkarScreenContent extends StatelessWidget {
                   children: [
                     Text(
                       '${(progress * 100).round()}%',
-                      style: GoogleFonts.cairo(
+                      style: GoogleFonts.ibmPlexSansArabic(
                         fontSize: 12,
                         color: AppColors.textSecondary,
                       ),
                     ),
                     Text(
                       '$total / $done',
-                      style: GoogleFonts.cairo(
+                      style: GoogleFonts.ibmPlexSansArabic(
                         fontSize: 12,
                         color: AppColors.textSecondary,
                       ),
@@ -161,7 +161,7 @@ class _AzkarList extends StatelessWidget {
           return Center(
             child: Text(
               state.message,
-              style: GoogleFonts.cairo(color: AppColors.textSecondary),
+              style: GoogleFonts.ibmPlexSansArabic(color: AppColors.textSecondary),
             ),
           );
         }
@@ -170,7 +170,7 @@ class _AzkarList extends StatelessWidget {
           return Center(
             child: Text(
               'لا توجد أذكار حالياً',
-              style: GoogleFonts.cairo(color: AppColors.textSecondary),
+              style: GoogleFonts.ibmPlexSansArabic(color: AppColors.textSecondary),
             ),
           );
         }
@@ -266,7 +266,7 @@ class _AzkarList extends StatelessWidget {
                       child: Center(
                         child: Text(
                           '${zekr.currentCount}',
-                          style: GoogleFonts.cairo(
+                          style: GoogleFonts.ibmPlexSansArabic(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                             fontSize: 14,
@@ -315,7 +315,7 @@ class _AzkarList extends StatelessWidget {
           const SizedBox(height: 20),
           Text(
             'بارك الله فيك!',
-            style: GoogleFonts.cairo(
+            style: GoogleFonts.ibmPlexSansArabic(
               fontSize: 20,
               fontWeight: FontWeight.bold,
               color: isDark ? AppColors.textLight : AppColors.textPrimary,
@@ -324,7 +324,7 @@ class _AzkarList extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             'أتممت أذكارك',
-            style: GoogleFonts.cairo(
+            style: GoogleFonts.ibmPlexSansArabic(
               fontSize: 14,
               color: AppColors.textSecondary,
             ),

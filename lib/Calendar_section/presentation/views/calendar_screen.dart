@@ -81,7 +81,7 @@ class _CalendarContent extends StatelessWidget {
                 child: Text(
                   'التقويم',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(
+                  style: GoogleFonts.ibmPlexSansArabic(
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
                     color: isDark ? AppColors.textLight : AppColors.textPrimary,
@@ -148,7 +148,7 @@ class _CalendarErrorView extends StatelessWidget {
             Text(
               message,
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(
+              style: GoogleFonts.ibmPlexSansArabic(
                 fontSize: 14,
                 color: isDark ? AppColors.textMuted : AppColors.textSecondary,
               ),

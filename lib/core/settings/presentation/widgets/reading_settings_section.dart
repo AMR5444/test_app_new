@@ -70,7 +70,7 @@ class ReadingSettingsSection extends StatelessWidget {
           children: [
             Text(
               'اختر القارئ',
-              style: GoogleFonts.cairo(
+              style: GoogleFonts.ibmPlexSansArabic(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: isDark ? AppColors.textLight : AppColors.textPrimary,
@@ -83,7 +83,7 @@ class ReadingSettingsSection extends StatelessWidget {
                 title: Text(
                   reciter,
                   textDirection: TextDirection.rtl,
-                  style: GoogleFonts.cairo(
+                  style: GoogleFonts.ibmPlexSansArabic(
                     color: isDark ? AppColors.textLight : AppColors.textPrimary,
                   ),
                 ),

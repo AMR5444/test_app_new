@@ -42,13 +42,13 @@ class AppTheme {
         brightness: Brightness.light,
       ),
       scaffoldBackgroundColor: AppColors.bgLight,
-      textTheme: GoogleFonts.cairoTextTheme(),
-      fontFamily: GoogleFonts.cairo().fontFamily,
+      textTheme: GoogleFonts.ibmPlexSansArabicTextTheme(),
+      fontFamily: GoogleFonts.ibmPlexSansArabic().fontFamily,
       appBarTheme: AppBarTheme(
         backgroundColor: AppColors.bgLight,
         elevation: 0,
         centerTitle: true,
-        titleTextStyle: GoogleFonts.cairo(
+        titleTextStyle: GoogleFonts.ibmPlexSansArabic(
           color: AppColors.textPrimary,
           fontSize: 20,
           fontWeight: FontWeight.bold,
@@ -74,15 +74,15 @@ class AppTheme {
         brightness: Brightness.dark,
       ),
       scaffoldBackgroundColor: AppColors.bgDark,
-      textTheme: GoogleFonts.cairoTextTheme(
+      textTheme: GoogleFonts.ibmPlexSansArabicTextTheme(
         ThemeData.dark().textTheme,
       ),
-      fontFamily: GoogleFonts.cairo().fontFamily,
+      fontFamily: GoogleFonts.ibmPlexSansArabic().fontFamily,
       appBarTheme: AppBarTheme(
         backgroundColor: AppColors.bgDark,
         elevation: 0,
         centerTitle: true,
-        titleTextStyle: GoogleFonts.cairo(
+        titleTextStyle: GoogleFonts.ibmPlexSansArabic(
           color: AppColors.textLight,
           fontSize: 20,
           fontWeight: FontWeight.bold,

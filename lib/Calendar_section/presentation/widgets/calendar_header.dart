@@ -62,7 +62,7 @@ class CalendarHeader extends StatelessWidget {
                         children: [
                           Text(
                             weekdayLabel,
-                            style: GoogleFonts.cairo(
+                            style: GoogleFonts.ibmPlexSansArabic(
                               fontSize: 15,
                               fontWeight: FontWeight.w700,
                               color: textColor,
@@ -99,7 +99,7 @@ class CalendarHeader extends StatelessWidget {
                         children: [
                           Text(
                             hijriLabel,
-                            style: GoogleFonts.cairo(
+                            style: GoogleFonts.ibmPlexSansArabic(
                               fontSize: 15,
                               fontWeight: FontWeight.w700,
                               color: AppColors.accent,
@@ -107,7 +107,7 @@ class CalendarHeader extends StatelessWidget {
                           ),
                           Text(
                             gregorianLabel,
-                            style: GoogleFonts.cairo(
+                            style: GoogleFonts.ibmPlexSansArabic(
                               fontSize: 11,
                               color: mutedColor,
                             ),
@@ -167,7 +167,7 @@ class _ArchBadge extends StatelessWidget {
             padding: const EdgeInsets.only(top: 10),
             child: Text(
               label,
-              style: GoogleFonts.cairo(
+              style: GoogleFonts.ibmPlexSansArabic(
                 fontSize: 30,
                 fontWeight: FontWeight.w800,
                 color: isDark ? AppColors.textLight : AppColors.primary,

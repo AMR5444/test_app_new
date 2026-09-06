@@ -134,7 +134,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                       const SizedBox(height: 2),
                       Text(
                         item['label'] as String,
-                        style: GoogleFonts.cairo(
+                        style: GoogleFonts.ibmPlexSansArabic(
                           fontSize: 10,
                           fontWeight: isSelected
                               ? FontWeight.bold

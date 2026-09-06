@@ -82,7 +82,7 @@ class QuickAccessGrid extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     item['label'] as String,
-                    style: GoogleFonts.cairo(
+                    style: GoogleFonts.ibmPlexSansArabic(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: isDark

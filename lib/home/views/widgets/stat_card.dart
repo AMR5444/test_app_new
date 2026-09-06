@@ -51,7 +51,7 @@ class StatCard extends StatelessWidget {
               ),
               Text(
                 label,
-                style: GoogleFonts.cairo(
+                style: GoogleFonts.ibmPlexSansArabic(
                   fontSize: 13,
                   color: AppColors.textSecondary,
                 ),
@@ -61,7 +61,7 @@ class StatCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             value,
-            style: GoogleFonts.cairo(
+            style: GoogleFonts.ibmPlexSansArabic(
               fontSize: 20,
               fontWeight: FontWeight.bold,
               color: isDark ? AppColors.textLight : AppColors.textPrimary,
@@ -69,7 +69,7 @@ class StatCard extends StatelessWidget {
           ),
           Text(
             subtitle,
-            style: GoogleFonts.cairo(
+            style: GoogleFonts.ibmPlexSansArabic(
               fontSize: 11,
               color: AppColors.textSecondary,
             ),

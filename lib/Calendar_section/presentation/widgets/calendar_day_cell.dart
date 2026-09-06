@@ -65,7 +65,7 @@ class CalendarDayCell extends StatelessWidget {
               children: [
                 Text(
                   _hijriService.toArabicDigits(day.hijriDay),
-                  style: GoogleFonts.cairo(
+                  style: GoogleFonts.ibmPlexSansArabic(
                     fontSize: 16,
                     fontWeight: FontWeight.w800,
                     color: fg,
@@ -74,7 +74,7 @@ class CalendarDayCell extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   _hijriService.toArabicDigits(day.gregorianDate.day),
-                  style: GoogleFonts.cairo(fontSize: 10, color: subFg),
+                  style: GoogleFonts.ibmPlexSansArabic(fontSize: 10, color: subFg),
                 ),
                 if (day.hasEvents && !isSelected && !day.isToday) ...[
                   const SizedBox(height: 3),

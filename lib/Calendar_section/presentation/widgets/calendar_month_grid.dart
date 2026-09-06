@@ -34,7 +34,7 @@ class CalendarMonthGrid extends StatelessWidget {
                       child: Center(
                         child: Text(
                           label,
-                          style: GoogleFonts.cairo(
+                          style: GoogleFonts.ibmPlexSansArabic(
                             fontSize: 13,
                             fontWeight: FontWeight.w700,
                             color: isDark

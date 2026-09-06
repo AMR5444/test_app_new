@@ -34,7 +34,7 @@ class QiblaErrorView extends StatelessWidget {
             Text(
               message,
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(
+              style: GoogleFonts.ibmPlexSansArabic(
                 fontSize: 15,
                 color: isDark ? AppColors.textLight : AppColors.textPrimary,
               ),
@@ -43,7 +43,7 @@ class QiblaErrorView extends StatelessWidget {
             ElevatedButton.icon(
               onPressed: () => context.read<QiblaCubit>().retry(),
               icon: const Icon(Icons.refresh),
-              label: Text('إعادة المحاولة', style: GoogleFonts.cairo()),
+              label: Text('إعادة المحاولة', style: GoogleFonts.ibmPlexSansArabic()),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: AppColors.textLight,
