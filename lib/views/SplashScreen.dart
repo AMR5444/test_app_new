@@ -30,7 +30,10 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       backgroundColor: AppColors.bgLight,
       body: SizedBox.expand(
-        child: Image.asset('lib/assets/images/splash.png', fit: BoxFit.contain),
+        child: Image.asset(
+          'lib/assets/images/splash.webp',
+          fit: BoxFit.contain,
+        ),
       ),
     );
   }

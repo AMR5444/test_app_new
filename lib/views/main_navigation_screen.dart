@@ -21,8 +21,16 @@ class MainNavigationScreen extends StatefulWidget {
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _currentIndex = 0;
 
+  // Tracks which tabs have actually been opened. Tabs are only built the
+  // first time they're visited so app startup doesn't pay the init cost
+  // (network calls, GPS, sensors, Hive reads) of all 7 tabs at once.
+  final Set<int> _visitedTabs = {0};
+
   void _navigateTo(int index) {
-    setState(() => _currentIndex = index);
+    setState(() {
+      _currentIndex = index;
+      _visitedTabs.add(index);
+    });
   }
 
   @override
@@ -30,15 +38,25 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     return BlocSelector<SettingsCubit, SettingsState, bool>(
       selector: (state) => state.isDarkMode,
       builder: (context, isDark) {
-        final List<Widget> screens = [
-          HomeScreen(onNavigate: _navigateTo, isVisible: _currentIndex == 0),
-          const QuranIndexScreen(),
-          const AzkarCategoriesScreen(),
-          QiblaScreen(isVisible: _currentIndex == 3),
-          const CalendarScreen(),
-          const SettingsScreen(),
-          const TasbeehScreen(),
+        final List<Widget Function()> screenBuilders = [
+          () => HomeScreen(
+            onNavigate: _navigateTo,
+            isVisible: _currentIndex == 0,
+          ),
+          () => const QuranIndexScreen(),
+          () => const AzkarCategoriesScreen(),
+          () => QiblaScreen(isVisible: _currentIndex == 3),
+          () => const CalendarScreen(),
+          () => const SettingsScreen(),
+          () => const TasbeehScreen(),
         ];
+
+        final screens = List<Widget>.generate(
+          screenBuilders.length,
+          (i) => _visitedTabs.contains(i)
+              ? screenBuilders[i]()
+              : const SizedBox.shrink(),
+        );
 
         return Scaffold(
           body: IndexedStack(index: _currentIndex, children: screens),
@@ -103,7 +121,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
               final item = items[index];
               final isSelected = _currentIndex == index;
               return GestureDetector(
-                onTap: () => setState(() => _currentIndex = index),
+                onTap: () => _navigateTo(index),
                 behavior: HitTestBehavior.opaque,
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),

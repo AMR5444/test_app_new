@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:adhan_dart/adhan_dart.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:geocoding/geocoding.dart';
@@ -18,6 +20,8 @@ class PrayerTimesService {
   Map<String, String>? _cachedTimesMap;
   DateTime? _cachedTimesMapDate;
 
+  static bool _timeZonesInitialized = false;
+
   Future<PrayerTimesData> load() async {
     if (!await Geolocator.isLocationServiceEnabled()) {
       throw const PrayerTimesException('خدمة الموقع غير مفعلة');
@@ -32,8 +36,29 @@ class PrayerTimesService {
       throw const PrayerTimesException('لا يمكن الوصول إلى الموقع');
     }
 
-    final position = await Geolocator.getCurrentPosition();
-    tz.initializeTimeZones();
+    // Try a fast, already-known position first so we're not always paying
+    // for a cold GPS fix. If it's missing we just wait for the fresh fix.
+    final lastKnown = await Geolocator.getLastKnownPosition();
+
+    Position position;
+    try {
+      position = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.medium,
+          timeLimit: Duration(seconds: 6),
+        ),
+      );
+    } catch (_) {
+      if (lastKnown == null) rethrow;
+      position = lastKnown;
+    }
+
+    // The IANA timezone database only needs to be loaded once per app run,
+    // not on every prayer-times refresh.
+    if (!_timeZonesInitialized) {
+      tz.initializeTimeZones();
+      _timeZonesInitialized = true;
+    }
     final timezoneInfo = await FlutterTimezone.getLocalTimezone();
     _timezone = tz.getLocation(timezoneInfo.identifier);
 
@@ -48,7 +73,10 @@ class PrayerTimesService {
     _cachedTimesMap = null;
     _cachedTimesMapDate = null;
 
-    await _resolveLocationName(position);
+    // Reverse geocoding is a network call and isn't needed to compute the
+    // times themselves — don't block the UI on it. The location label will
+    // fill in ("موقعك الحالي" shows meanwhile) once it resolves.
+    unawaited(_resolveLocationName(position));
 
     return _buildData(now);
   }
