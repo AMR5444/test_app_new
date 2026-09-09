@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Android 12+ (API 31+) uses its own native SplashScreen API instead of
-     the windowBackground drawable approach; without this override those
-     devices show a generic system-generated splash instead of our logo. -->
+<!-- Android 12+ (API 31+) uses its own native SplashScreen API. We deliberately
+     show NO icon here (transparent) — the branded logo is shown exactly once,
+     by lib/views/SplashScreen.dart, instead of flashing here first and then
+     again in the Flutter splash. -->
 <resources>
     <style name="LaunchTheme" parent="@android:style/Theme.Light.NoTitleBar">
         <item name="android:windowSplashScreenBackground">@color/splash_background</item>
-        <item name="android:windowSplashScreenAnimatedIcon">@drawable/launch_logo</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/transparent_splash_icon</item>
         <item name="android:windowSplashScreenIconBackgroundColor">@color/splash_background</item>
         <item name="android:windowBackground">@drawable/launch_background</item>
     </style>

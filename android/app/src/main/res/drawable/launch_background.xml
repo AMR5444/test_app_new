@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Native splash background, kept in sync with AppColors.bgLight and the
-     logo used by lib/views/SplashScreen.dart so there is no visible flash
-     or jump when the Flutter engine takes over. -->
+<!-- Plain background only, matching AppColors.bgLight / the splash.webp
+     background — no logo here. The logo is shown once by
+     lib/views/SplashScreen.dart so the user only sees it once, not as a
+     separate flash before Flutter's first frame. -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:drawable="@color/splash_background" />
-    <item>
-        <bitmap
-            android:gravity="center"
-            android:src="@drawable/launch_logo" />
-    </item>
 </layer-list>

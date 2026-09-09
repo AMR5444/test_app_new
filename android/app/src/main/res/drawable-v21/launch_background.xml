@@ -1,12 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Same composition as drawable/launch_background.xml; API 21+ used to
-     fall back to the theme's window background (?android:colorBackground)
-     here, which caused the white flash before Flutter's first frame. -->
+<!-- Plain background only — see drawable/launch_background.xml. -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:drawable="@color/splash_background" />
-    <item>
-        <bitmap
-            android:gravity="center"
-            android:src="@drawable/launch_logo" />
-    </item>
 </layer-list>
